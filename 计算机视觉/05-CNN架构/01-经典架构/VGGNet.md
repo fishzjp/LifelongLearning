@@ -12,6 +12,7 @@
 **深度探索**: 证明网络深度对性能的决定性作用
 
 ### 设计原则
+
 1. **小卷积核**: 全部使用3×3
 2. **堆叠策略**: 2-3个卷积后池化
 3. **通道递增**: 64→128→256→512→512
@@ -207,6 +208,7 @@ class VGG16(nn.Module):
 
 
 # VGG系列配置生成器
+
 cfgs = {
     'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],  # VGG11
     'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],  # VGG13
@@ -232,6 +234,7 @@ def make_layers(cfg, batch_norm=False):
 
 
 # VGG系列统计工具
+
 def vgg_stats():
     """VGG系列参数量对比"""
     models = {
@@ -269,6 +272,7 @@ def vgg_stats():
 
 
 # 测试
+
 if __name__ == "__main__":
     model = VGG16()
     x = torch.randn(1, 3, 224, 224)
@@ -325,6 +329,7 @@ if __name__ == "__main__":
 | VGG19 | 16层 | 3层 | 1.44亿 | 最深，精度最高 |
 
 ### 参数分布（VGG16）
+
 ```
 总参数: 138.4M
 ├─ 卷积层: 13.8M (10%)
@@ -357,12 +362,14 @@ if __name__ == "__main__":
 ## 🎯 适用场景
 
 ### ✅ 推荐使用
+
 - **特征提取器** (迁移学习)
 - **高精度要求场景**
 - **学术研究基准模型**
 - **有充足GPU资源**
 
 ### ❌ 不推荐
+
 - **移动端/边缘设备**
 - **实时推理**
 - **小数据集**
@@ -373,6 +380,7 @@ if __name__ == "__main__":
 ## 🔍 深度分析：为什么小卷积核更好？
 
 ### 1. 参数对比
+
 ```
 感受野 = 7
 ├─ 1个7×7卷积: 参数 = 7×7 = 49
@@ -382,6 +390,7 @@ if __name__ == "__main__":
 ```
 
 ### 2. 非线性对比
+
 ```
 1个7×7卷积:
   Conv → ReLU (1次非线性)
@@ -393,6 +402,7 @@ if __name__ == "__main__":
 ```
 
 ### 3. 感受野计算
+
 $$RF_n = RF_{n-1} + (k-1) \times stride$$
 
 **证明**:
@@ -407,26 +417,33 @@ $$RF_n = RF_{n-1} + (k-1) \times stride$$
 ## 🚀 实践建议
 
 ### 1. 使用预训练模型
+
 ```python
 import torchvision.models as models
 
 # 加载VGG16
+
 model = models.vgg16(pretrained=True)
 
 # 修改分类头
+
 model.classifier[6] = nn.Linear(4096, num_classes)
 ```
 
 ### 2. 迁移学习策略
-```python
+
+```bash
 # 冻结卷积层（推荐）
+
 for param in model.features.parameters():
     param.requires_grad = False
 
 # 只训练分类器
+
 optimizer = torch.optim.Adam(model.classifier.parameters(), lr=0.001)
 
 # 或分层微调
+
 optimizer = torch.optim.Adam([
     {'params': model.classifier.parameters(), 'lr': 0.001},
     {'params': model.features[-10:].parameters(), 'lr': 0.0001},  # 最后几层
@@ -434,16 +451,20 @@ optimizer = torch.optim.Adam([
 ```
 
 ### 3. 内存优化
-```python
+
+```bash
 # 1. 减小batch_size
+
 train_loader = DataLoader(dataset, batch_size=8, shuffle=True)
 
 # 2. 混合精度
+
 from torch.cuda.amp import autocast
 with autocast():
     outputs = model(inputs)
 
 # 3. 使用更小的VGG
+
 model = models.vgg11(pretrained=True)  # 参数减少70%
 ```
 
@@ -452,16 +473,19 @@ model = models.vgg11(pretrained=True)  # 参数减少70%
 ## 📊 性能基准
 
 ### ImageNet准确率
+
 - **VGG11**: 69.5%
 - **VGG13**: 70.0%
 - **VGG16**: 71.3%
 - **VGG19**: 71.3%
 
 ### CIFAR-10（适配后）
+
 - **VGG16**: ~85%
 - **训练时间**: 慢（相比ResNet）
 
 ### 推理速度
+
 | 模型 | GPU (ms) | 参数量 |
 |------|----------|--------|
 | VGG11 | 5 | 133M |
@@ -474,14 +498,17 @@ model = models.vgg11(pretrained=True)  # 参数减少70%
 ## 🔧 常见问题
 
 ### 1. 显存溢出
+
 **问题**: 138M参数 + 大batch_size
 
 **解决方案**:
-```python
+```bash
 # 1. 减小batch_size
+
 train_loader = DataLoader(dataset, batch_size=4, shuffle=True)
 
 # 2. 使用梯度累积
+
 accumulation_steps = 8
 for i, (inputs, labels) in enumerate(train_loader):
     outputs = model(inputs)
@@ -493,22 +520,27 @@ for i, (inputs, labels) in enumerate(train_loader):
         optimizer.zero_grad()
 
 # 3. 使用VGG11替代
+
 model = models.vgg11(pretrained=True)
 ```
 
 ### 2. 训练极慢
+
 **问题**: 每轮训练时间过长
 
 **解决方案**:
-```python
+```bash
 # 1. 使用预训练模型（最重要！）
+
 model = models.vgg16(pretrained=True)
 
 # 2. 冻结卷积层
+
 for param in model.features.parameters():
     param.requires_grad = False
 
 # 3. 混合精度训练
+
 from torch.cuda.amp import autocast, GradScaler
 scaler = GradScaler()
 with autocast():
@@ -524,6 +556,7 @@ scaler.update()
 ## 🎓 学习要点
 
 ### 必须理解
+
 - [x] 小卷积核堆叠原理
 - [x] 感受野计算公式
 - [x] 通道递增策略
@@ -531,6 +564,7 @@ scaler.update()
 - [x] 参数量分布
 
 ### 推荐实践
+
 - [ ] 计算不同VGG变体的参数量
 - [ ] 对比1×1、3×3、5×5、7×7卷积
 - [ ] 实现VGG16并训练CIFAR-10
@@ -542,16 +576,19 @@ scaler.update()
 ## 🚀 现代替代方案
 
 ### 为什么不再使用VGG?
+
 1. **参数量太大**: 138M vs ResNet50的25M
 2. **计算量大**: 15.3G vs ResNet50的3.9G
 3. **内存占用高**: 难以部署
 
 ### 推荐替代
+
 - **ResNet**: 更好、更快、更小
 - **MobileNet**: 移动端首选
 - **EfficientNet**: 最新SOTA
 
 ### 保留价值
+
 - **学习用途**: 理解深度网络设计
 - **迁移学习**: 作为特征提取器
 - **学术基准**: 对比实验

@@ -18,6 +18,7 @@
 ## 🎯 为什么需要配置环境？
 
 ### 解决的痛点
+
 | 痛点场景 | 影响 | 本指南解决方案 |
 |---------|------|---------------|
 | 不知道安装什么工具 | 浪费时间搜索，安装错误版本 | 一键安装所有必需工具 |
@@ -25,6 +26,7 @@
 | 遇到安装错误无从下手 | 卡在第一步，丧失学习动力 | 提供常见问题解决方案 |
 
 ### 长期价值
+
 - **项目层面**：标准化环境，团队协作无障碍
 - **个人层面**：一次配置，长期使用，提升效率
 
@@ -35,9 +37,11 @@
 ### Windows用户
 
 #### 1. 下载Python
+
 访问 [python.org/downloads](https://www.python.org/downloads/)，下载 **Python 3.10 或 3.11**（推荐）
 
 #### 2. 关键：安装时必须勾选
+
 ```
 ☑️ Add Python to PATH  ← 必须勾选！
 ☑️ Install pip
@@ -45,8 +49,9 @@
 ```
 
 #### 3. 验证安装
+
 打开命令提示符（Win+R，输入cmd），运行：
-```bash
+```python
 python --version
 ```
 应该显示：`Python 3.10.x` 或 `Python 3.11.x`
@@ -58,24 +63,29 @@ python --version
 ### macOS用户
 
 #### 1. 检查是否已安装
+
 打开终端（Terminal），运行：
-```bash
+```python
 python3 --version
 ```
 
 如果显示版本号（如 `Python 3.10.x`），跳到第二步。
 
 #### 2. 如果未安装
+
 ```bash
 # 方法1：使用Homebrew（推荐）
+
 brew install python3
 
 # 方法2：从官网下载安装包
 # 访问 https://www.python.org/downloads/macos/
+
 ```
 
 #### 3. 验证安装
-```bash
+
+```python
 python3 --version
 pip3 --version
 ```
@@ -86,12 +96,15 @@ pip3 --version
 
 ```bash
 # 更新包管理器
+
 sudo apt update
 
 # 安装Python3和pip
+
 sudo apt install python3 python3-pip python3-venv
 
 # 验证
+
 python3 --version
 pip3 --version
 ```
@@ -106,6 +119,7 @@ pip3 --version
 
 ```bash
 # 创建requirements.txt文件（如果还没有）
+
 cat > requirements.txt << 'EOF'
 pytest==7.4.3
 pytest-html==4.1.1
@@ -117,6 +131,7 @@ openpyxl==3.1.2
 EOF
 
 # 一键安装所有工具
+
 pip install -r requirements.txt
 ```
 
@@ -126,15 +141,19 @@ pip install -r requirements.txt
 
 ```bash
 # 基础测试框架（必装）
+
 pip install pytest pytest-html
 
 # Web自动化（做UI测试时需要）
+
 pip install selenium
 
 # 接口测试（做接口测试时需要）
+
 pip install requests beautifulsoup4
 
 # 数据处理（做数据驱动测试时需要）
+
 pip install pandas openpyxl
 ```
 
@@ -225,9 +244,11 @@ if __name__ == "__main__":
 
 ```bash
 # 方法1：使用pytest运行（推荐）
+
 pytest test_verify_env.py -v
 
 # 方法2：直接运行Python脚本
+
 python test_verify_env.py
 ```
 
@@ -259,21 +280,25 @@ test_verify_env.py::test_first_test PASSED                             [100%]
 ### Q1: `pip` 命令找不到
 
 **症状**：
-```bash
+```yaml
 pip: command not found
 # 或
+
 'pip' 不是内部或外部命令
 ```
 
 **解决方案**：
 ```bash
 # Windows
+
 python -m pip --version
 
 # macOS/Linux
+
 python3 -m pip --version
 
 # 如果以上命令正常，使用以下方式安装
+
 python -m pip install pytest
 ```
 
@@ -282,7 +307,7 @@ python -m pip install pytest
 ### Q2: 安装超时或失败
 
 **症状**：
-```bash
+```yaml
 WARNING: Retrying (5(total): Download failed...
 ERROR: Could not install packages due to an EnvironmentError
 ```
@@ -290,12 +315,15 @@ ERROR: Could not install packages due to an EnvironmentError
 **解决方案**：
 ```bash
 # 使用国内镜像（清华大学源）
+
 pip install pytest -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 或使用阿里源
+
 pip install pytest -i https://mirrors.aliyun.com/pypi/simple/
 
 # 永久配置镜像源
+
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
@@ -304,28 +332,34 @@ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 ### Q3: 版本冲突
 
 **症状**：
-```bash
+```yaml
 ERROR: Cannot install -r requirements.txt (line 1) because these package versions have conflicting dependencies.
 ```
 
 **解决方案**：
 ```bash
 # 方法1：创建虚拟环境（推荐）
+
 python -m venv venv
 
 # 激活虚拟环境
 # Windows:
+
 venv\Scripts\activate
 # macOS/Linux:
+
 source venv/bin/activate
 
 # 然后在虚拟环境中安装
+
 pip install -r requirements.txt
 
 # 方法2：逐个安装，找到冲突的包
+
 pip install pytest
 pip install selenium
 # ...
+
 ```
 
 ---
@@ -333,7 +367,7 @@ pip install selenium
 ### Q4: Python版本过低
 
 **症状**：
-```bash
+```yaml
 ERROR: Package 'pytest' requires a different Python: 3.8.10 not in '>=3.9'
 ```
 
@@ -346,19 +380,22 @@ ERROR: Package 'pytest' requires a different Python: 3.8.10 not in '>=3.9'
 ### Q5: 权限问题（Linux/macOS）
 
 **症状**：
-```bash
+```yaml
 ERROR: Could not install packages due to an EnvironmentError: [Errno 13] Permission denied
 ```
 
 **解决方案**：
 ```bash
 # 方法1：使用--user参数
+
 pip install --user pytest
 
 # 方法2：使用sudo（不推荐）
+
 sudo pip install pytest
 
 # 方法3：使用虚拟环境（最佳）
+
 python -m venv venv
 source venv/bin/activate
 pip install pytest
@@ -369,7 +406,7 @@ pip install pytest
 ### Q6: 验证测试失败
 
 **症状**：
-```bash
+```python
 FAILED test_verify_env.py::test_python_version - AssertionError: 需要Python 3.10+
 ```
 
@@ -377,13 +414,13 @@ FAILED test_verify_env.py::test_python_version - AssertionError: 需要Python 3.
 1. 检查Python版本：`python --version`
 2. 如果版本过低，升级Python
 3. 如果系统有多个Python版本，确保使用正确的：
-   ```bash
+```bash
    # Windows
    python3.10 -m pytest test_verify_env.py
 
    # macOS/Linux
    python3.10 -m pytest test_verify_env.py
-   ```
+```
 
 ---
 
@@ -395,6 +432,7 @@ FAILED test_verify_env.py::test_python_version - AssertionError: 需要Python 3.
 
 ```bash
 # 1. 创建Hello World测试文件
+
 cat > test_hello.py << 'EOF'
 def test_hello_world():
     """我的第一个测试"""
@@ -418,6 +456,7 @@ def test_login_demo():
 EOF
 
 # 2. 运行测试
+
 pytest test_hello.py -v -s
 
 # 3. 看到输出
@@ -429,6 +468,7 @@ pytest test_hello.py -v -s
 # test_hello.py::test_login_demo PASSED                                  [100%]
 #
 # =============================== 2 passed in 0.01s ===============================
+
 ```
 
 ---
@@ -447,26 +487,34 @@ pytest test_hello.py -v -s
 ## 💡 环境维护建议
 
 ### 定期更新工具
+
 ```bash
 # 每月更新一次
+
 pip list --outdated
 pip install --upgrade pytest selenium requests
 ```
 
 ### 备份环境
+
 ```bash
 # 导出当前环境
+
 pip freeze > requirements.txt
 
 # 下次在新机器上直接安装
+
 pip install -r requirements.txt
 ```
 
 ### 清理环境
+
 ```bash
 # 如果需要重新开始
+
 pip uninstall -r requirements.txt
 # 然后重新安装
+
 ```
 
 ---

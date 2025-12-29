@@ -12,6 +12,7 @@
 **首次证明CNN在图像识别上的有效性**，奠定了现代CNN的基本范式
 
 ### 三大核心原则
+
 1. **局部感受野 (Local Receptive Fields)**: 神经元只连接输入的局部区域
 2. **权值共享 (Weight Sharing)**: 同一个卷积核在整张图上滑动
 3. **空间下采样 (Spatial Subsampling)**: 池化层减少空间维度
@@ -21,6 +22,7 @@
 ## 📐 数学原理详解
 
 ### 1. 卷积操作
+
 $$f(x) = (W * x) + b$$
 
 **参数说明**:
@@ -38,6 +40,7 @@ Padding: 2 (保持边界)
 ```
 
 ### 2. 平均池化
+
 $$\text{AvgPool}(x) = \frac{1}{2×2}\sum_{i=1}^{2}\sum_{j=1}^{2}x_{i,j}$$
 
 **特点**:
@@ -151,6 +154,7 @@ class LeNet5(nn.Module):
 
 
 # 测试代码
+
 if __name__ == "__main__":
     model = LeNet5()
     x = torch.randn(1, 1, 32, 32)
@@ -240,12 +244,14 @@ if __name__ == "__main__":
 ## 🎯 适用场景
 
 ### ✅ 推荐使用
+
 - **手写数字识别** (MNIST > 99%)
 - **CNN入门教学** (理解基础概念)
 - **嵌入式设备** (极低资源需求)
 - **简单图像分类** (类别少、背景简单)
 
 ### ❌ 不推荐
+
 - **复杂图像分类** (ImageNet等)
 - **大尺寸输入** (>64×64)
 - **高精度要求** (需要更深网络)
@@ -297,6 +303,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
 # 数据准备
+
 transform = transforms.Compose([
     transforms.Resize(32),  # 调整到32×32
     transforms.ToTensor(),
@@ -309,6 +316,7 @@ train_dataset = torchvision.datasets.MNIST(
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 
 # 模型和训练
+
 model = LeNet5(num_classes=10)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = model.to(device)
@@ -317,6 +325,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
 # 训练循环
+
 for epoch in range(20):
     model.train()
     total_loss = 0
@@ -352,8 +361,9 @@ for epoch in range(20):
 
 ### 2. 自定义数据集适配
 
-```python
+```bash
 # 如果你的数据集不是28×28灰度图
+
 class LeNet5_Adapted(nn.Module):
     def __init__(self, num_classes=10, input_channels=1, input_size=32):
         super().__init__()
@@ -399,6 +409,7 @@ class LeNet5_Adapted(nn.Module):
 ## 📊 性能对比
 
 ### MNIST数据集
+
 | 模型 | 准确率 | 参数量 | 训练时间 |
 |------|--------|--------|----------|
 | LeNet-5 | **99.2%** | 61K | 快 |
@@ -407,6 +418,7 @@ class LeNet5_Adapted(nn.Module):
 | SVM | 98.5% | - | 慢 |
 
 ### CIFAR-10数据集（适配后）
+
 | 模型 | 准确率 | 参数量 | 备注 |
 |------|--------|--------|------|
 | LeNet-5 | ~65% | 61K | 需要调整输入尺寸 |
@@ -418,17 +430,21 @@ class LeNet5_Adapted(nn.Module):
 ## 🔧 常见问题
 
 ### 1. 训练不收敛
+
 **症状**: Loss不下降或震荡
 
 **解决方案**:
-```python
+```bash
 # 1. 数据标准化（必须！）
+
 transform = transforms.Normalize((0.1307,), (0.3081,))
 
 # 2. 学习率调整
+
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
 # 3. 添加BatchNorm（改进版）
+
 class LeNet5_BN(nn.Module):
     def __init__(self):
         super().__init__()
@@ -446,14 +462,17 @@ class LeNet5_BN(nn.Module):
 ```
 
 ### 2. 输入尺寸不匹配
+
 **问题**: 原始LeNet-5要求32×32输入
 
 **解决方案**:
-```python
+```bash
 # 方法1: 调整输入
+
 transform = transforms.Resize(32)
 
 # 方法2: 自适应网络
+
 class LeNet5_Flexible(nn.Module):
     def __init__(self, num_classes=10, input_channels=1):
         super().__init__()
@@ -480,6 +499,7 @@ class LeNet5_Flexible(nn.Module):
 ## 🎓 学习要点
 
 ### 必须理解
+
 - [x] 卷积操作的数学原理
 - [x] 池化的作用和类型
 - [x] 参数量计算方法
@@ -487,6 +507,7 @@ class LeNet5_Flexible(nn.Module):
 - [x] 权值共享的意义
 
 ### 推荐实践
+
 - [ ] 手写推导前向传播
 - [ ] 计算各层参数量
 - [ ] 在MNIST上训练并达到99%+
@@ -498,10 +519,12 @@ class LeNet5_Flexible(nn.Module):
 ## 📚 扩展阅读
 
 ### 相关论文
+
 - "Gradient-Based Learning Applied to Document Recognition" (LeCun et al., 1998)
 - "Backpropagation Applied to Handwritten Zip Code Recognition" (LeCun et al., 1989)
 
 ### 现代改进
+
 - **LeNet-4/LeNet-3**: 早期版本
 - **LeNet-5**: 经典版本
 - **LeNet-5 with ReLU**: 现代改进

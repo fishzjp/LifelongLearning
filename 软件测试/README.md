@@ -22,15 +22,18 @@
 ## 🚀 5分钟快速开始
 
 ### 第一步：环境配置（15分钟）
+
 ```bash
 # 1. 安装Python（如未安装）
 # 访问 https://www.python.org/downloads/ 下载3.10+
 
 # 2. 安装测试工具
+
 cd /Users/fish/code/学习资料/软件测试
 pip install pytest selenium requests
 
 # 3. 验证环境
+
 pytest docs/setup/verify_env.py -v
 ```
 
@@ -39,8 +42,10 @@ pytest docs/setup/verify_env.py -v
 ---
 
 ### 第二步：Hello World（5分钟）
+
 ```bash
 # 创建你的第一个测试
+
 cat > test_hello.py << 'EOF'
 def test_hello():
     assert 1 + 1 == 2
@@ -56,6 +61,7 @@ def test_login():
 EOF
 
 # 运行测试
+
 pytest test_hello.py -v
 ```
 
@@ -64,6 +70,7 @@ pytest test_hello.py -v
 ---
 
 ### 第三步：查术语（随时）
+
 遇到不懂的术语？直接查术语表：
 - [完整术语表](./docs/glossary/README.md) - 100+个术语
 - 按字母索引，快速查找
@@ -206,6 +213,7 @@ pytest test_hello.py -v
 ### 新增内容（解决痛点）
 
 #### 1. **背景与价值（The "Why"）**
+
 每个章节开头新增：
 - ✅ **解决的痛点**：具体场景 + 实际影响
 - ✅ **适用场景**：什么时候用，什么时候不用
@@ -218,6 +226,7 @@ pytest test_hello.py -v
 ```
 
 #### 2. **新人友好度（Onboarding）**
+
 新增：
 - ✅ **学习目标**：明确学完能做什么
 - ✅ **预计时间**：合理安排学习计划
@@ -226,26 +235,31 @@ pytest test_hello.py -v
 - ✅ **常见问题FAQ**：预判并解决新手问题
 
 #### 3. **结构化与清晰度（Clarity）**
+
 统一模板：
 ```
 ## 🚀 为什么需要这个？
 ## 📖 核心概念
 ## 🛠️ 环境准备
 ## 📝 标准操作流程
+
    - 前置条件
    - 详细步骤（1, 2, 3...）
    - 预期结果
    - 验证方法
 ## 🧹 清理步骤
 ## ✅ 最佳实践
+
    - 推荐做法（Do's）
    - 反模式（Don'ts）
 ## ⚠️ 常见陷阱
+
    - 陷阱1：症状 → 原因 → 解决方案 → 预防
    - 陷阱2：...
 ## 🎯 实践练习
 ## 📊 本章小结
 ## 🔗 相关资源
+
 ```
 
 ---
@@ -253,10 +267,12 @@ pytest test_hello.py -v
 ## 🛠️ 标准化模板
 
 ### 1. 通用文档模板
+
 **位置**：`docs/templates/standard-template.md`
 **用途**：所有章节的标准格式
 
 ### 2. 测试用例模板
+
 **位置**：`docs/templates/test-case-template.md`
 **包含**：
 - 前置条件
@@ -266,6 +282,7 @@ pytest test_hello.py -v
 - 评估标准
 
 ### 3. 缺陷报告模板
+
 **位置**：`docs/templates/bug-report-template.md`
 **包含**：
 - 重现步骤
@@ -274,6 +291,7 @@ pytest test_hello.py -v
 - 修复建议
 
 ### 4. 测试策略模板
+
 **位置**：`docs/templates/test-strategy-template.md`
 **包含**：
 - 风险分析
@@ -286,6 +304,7 @@ pytest test_hello.py -v
 ## 📊 学习效果对比
 
 ### 优化前
+
 - ❌ 新人上手需要2-3天
 - ❌ 文档查阅效率低
 - ❌ 问题定位需要30分钟
@@ -293,6 +312,7 @@ pytest test_hello.py -v
 - ❌ 没有最佳实践
 
 ### 优化后
+
 - ✅ 新人上手只需1小时（↓90%）
 - ✅ 文档查阅效率提升100%
 - ✅ 问题定位只需5分钟（↓83%）
@@ -304,12 +324,14 @@ pytest test_hello.py -v
 ## 🎯 学习建议
 
 ### ✅ 应该做的
+
 1. **每天动手**：只看不练=没学，必须运行代码
 2. **先理解后记忆**：理解原理比背诵重要
 3. **记录问题**：遇到问题先记录，再搜索
 4. **分享输出**：教是最好的学，写博客或分享
 
 ### ❌ 避免的坑
+
 1. **跳过基础**：基础不牢，地动山摇
 2. **贪多求快**：一天学10章不如1章学3遍
 3. **不写注释**：代码是写给人看的
@@ -320,18 +342,21 @@ pytest test_hello.py -v
 ## 📈 学习进度跟踪
 
 ### Level 1: 新手（1-2周）
+
 - [ ] 完成环境配置
 - [ ] 运行10个测试用例
 - [ ] 理解等价类划分
 - [ ] 编写1个缺陷报告
 
 ### Level 2: 进阶（1个月）
+
 - [ ] 掌握3种测试方法
 - [ ] 完成自动化测试入门
 - [ ] 参与1个真实项目
 - [ ] 能设计测试策略
 
 ### Level 3: 熟练（3个月）
+
 - [ ] 独立负责模块测试
 - [ ] 搭建自动化框架
 - [ ] 指导新人
@@ -342,21 +367,25 @@ pytest test_hello.py -v
 ## 💡 常见问题
 
 ### Q: 我应该从哪里开始？
+
 **A**:
 1. 如果你是完全新手：从[环境配置](./docs/setup/README.md)开始
 2. 如果你有编程基础：直接看[Hello World](./docs/tutorials/hello-world.md)
 3. 如果你有测试经验：查看[术语表](./docs/glossary/README.md)查漏补缺
 
 ### Q: 每天应该花多少时间？
+
 **A**:
 - 入门阶段：每天1小时
 - 进阶阶段：每天1-2小时
 - 专家阶段：每天2小时 + 实践
 
 ### Q: 遇到不懂的术语怎么办？
+
 **A**: 立即查看[术语表](./docs/glossary/README.md)，按字母查找
 
 ### Q: 如何验证学习效果？
+
 **A**:
 1. 完成每个章节的练习题
 2. 在实际项目中应用
@@ -368,6 +397,7 @@ pytest test_hello.py -v
 ## 🔗 相关资源
 
 ### 推荐工具
+
 - **代码编辑**：VS Code, IntelliJ IDEA
 - **接口测试**：Postman, Insomnia
 - **自动化**：Selenium, Cypress
@@ -375,12 +405,14 @@ pytest test_hello.py -v
 - **CI/CD**：Jenkins, GitLab CI
 
 ### 推荐书籍
+
 - 《Google软件测试之道》
 - 《持续交付》
 - 《测试驱动开发》
 - 《软件测试的艺术》
 
 ### 在线资源
+
 - Test Automation University
 - Ministry of Testing
 - OWASP官方文档
@@ -391,12 +423,14 @@ pytest test_hello.py -v
 ## 🤝 贡献与反馈
 
 ### 发现问题？
+
 - 文档错误
 - 解释不清
 - 缺少内容
 - 建议改进
 
 ### 如何反馈？
+
 1. 在文档底部添加评论
 2. 提交Issue到仓库
 3. 直接修改并提交PR
@@ -406,6 +440,7 @@ pytest test_hello.py -v
 ## 📅 更新日志
 
 ### v2.0 (2025-01-01) - 全面优化版
+
 - ✅ 新增"为什么需要"章节
 - ✅ 新增术语表系统
 - ✅ 新增环境配置指南
@@ -416,6 +451,7 @@ pytest test_hello.py -v
 - ✅ 新增学习路径导航
 
 ### v1.0 (2024-12-23) - 初始版
+
 - ✅ 完成22章理论文档
 - ✅ 完成4个实践练习
 - ✅ 完成学习指南
@@ -433,7 +469,7 @@ open ./docs/setup/README.md
 ```
 
 **第二步**：Hello World
-```bash
+```python
 open ./docs/tutorials/hello-world.md
 ```
 

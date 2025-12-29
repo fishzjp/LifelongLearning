@@ -12,6 +12,7 @@
 **2012年ImageNet冠军**，Top-5错误率16.4%，比第二名低10%，引爆深度学习革命
 
 ### 三大创新
+
 1. **ReLU激活**: 解决梯度消失，训练速度提升6倍
 2. **Dropout**: 防止过拟合，错误率降低10%
 3. **数据增强**: 相当于扩充数据集10倍
@@ -21,6 +22,7 @@
 ## 📐 数学原理
 
 ### 1. ReLU激活函数
+
 $$f(x) = \max(0, x)$$
 
 **对比Sigmoid**:
@@ -37,6 +39,7 @@ ReLU梯度: f'(x) = 1 (当x>0)
 ```
 
 ### 2. Dropout
+
 $$\text{Dropout}(x) = \begin{cases} 
 0 & \text{以概率p丢弃} \\
 \frac{x}{1-p} & \text{保留时缩放}
@@ -48,6 +51,7 @@ $$\text{Dropout}(x) = \begin{cases}
 - **效果**: 相当于集成学习，提高泛化能力
 
 ### 3. 重叠池化
+
 $$\text{MaxPool}(x) = \max_{i,j \in \text{kernel}}(x_{i,j})$$
 
 **特点**: stride < kernel_size
@@ -202,6 +206,7 @@ class AlexNet(nn.Module):
 
 
 # AlexNet风格的数据增强
+
 def alexnet_data_augmentation():
     """AlexNet成功的关键：数据增强"""
     import torchvision.transforms as T
@@ -224,6 +229,7 @@ def alexnet_data_augmentation():
 
 
 # 测试
+
 if __name__ == "__main__":
     model = AlexNet()
     x = torch.randn(1, 3, 227, 227)
@@ -273,12 +279,14 @@ if __name__ == "__main__":
 ## 🎯 适用场景
 
 ### ✅ 推荐使用
+
 - **通用图像分类**
 - **ImageNet等大规模数据集**
 - **高精度要求场景**
 - **GPU服务器**
 
 ### ❌ 不推荐
+
 - **移动端部署** (参数量太大)
 - **小数据集** (容易过拟合)
 - **实时推理** (计算量大)
@@ -289,6 +297,7 @@ if __name__ == "__main__":
 ## 🔍 深度分析：AlexNet的成功要素
 
 ### 1. 三大支柱
+
 ```
 大数据: ImageNet 120万图像，1000类别
   ↓
@@ -313,8 +322,9 @@ if __name__ == "__main__":
 
 ### 3. 训练技巧详解
 
-```python
+```bash
 # 1. 数据增强（关键！）
+
 def alexnet_transform():
     return transforms.Compose([
         transforms.RandomResizedCrop(224),      # 随机裁剪
@@ -330,6 +340,7 @@ def alexnet_transform():
     ])
 
 # 2. 训练配置
+
 optimizer = torch.optim.SGD(
     model.parameters(),
     lr=0.01,
@@ -338,6 +349,7 @@ optimizer = torch.optim.SGD(
 )
 
 # 3. 学习率调度
+
 def adjust_lr(epoch):
     if epoch < 30:
         return 0.01
@@ -349,6 +361,7 @@ def adjust_lr(epoch):
         return 0.00001
 
 # 4. 梯度裁剪（防止爆炸）
+
 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 ```
 
@@ -357,16 +370,19 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 ## 📊 性能基准
 
 ### ImageNet结果
+
 - **Top-1准确率**: 79.0%
 - **Top-5准确率**: 83.6%
 - **2012年冠军**: 比第二名低10%错误率
 
 ### CIFAR-10（适配后）
+
 - **准确率**: ~80%
 - **参数量**: 61M
 - **训练时间**: 中等
 
 ### 推理速度
+
 | Batch Size | GPU (ms) | CPU (ms) |
 |------------|----------|----------|
 | 1 | ~2 | ~50 |
@@ -378,14 +394,17 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 ## 🔧 常见问题
 
 ### 1. 显存不足
+
 **问题**: 61M参数 + 大batch_size导致OOM
 
 **解决方案**:
-```python
+```bash
 # 1. 减小batch_size
+
 train_loader = DataLoader(dataset, batch_size=16, shuffle=True)
 
 # 2. 混合精度训练
+
 from torch.cuda.amp import autocast, GradScaler
 scaler = GradScaler()
 with autocast():
@@ -398,14 +417,17 @@ scaler.update()
 # 3. 使用更小的变体
 # AlexNet-BN: 移除大FC层
 # SqueezeNet: 极致压缩
+
 ```
 
 ### 2. 训练不稳定
+
 **问题**: Loss震荡，收敛慢
 
 **解决方案**:
-```python
+```bash
 # 1. 添加BatchNorm（现代版）
+
 class AlexNet_BN(nn.Module):
     def __init__(self):
         super().__init__()
@@ -418,6 +440,7 @@ class AlexNet_BN(nn.Module):
         )
     
 # 2. 学习率warmup
+
 def warmup_lr(epoch):
     if epoch < 5:
         return 0.01 * (epoch + 1) / 5
@@ -425,6 +448,7 @@ def warmup_lr(epoch):
         return 0.01
 
 # 3. 检查数据
+
 assert not torch.isnan(inputs).any()
 assert not torch.isinf(inputs).any()
 ```
@@ -434,6 +458,7 @@ assert not torch.isinf(inputs).any()
 ## 🎓 学习要点
 
 ### 必须理解
+
 - [x] ReLU相比Sigmoid的优势
 - [x] Dropout的作用机制
 - [x] 数据增强的重要性
@@ -441,6 +466,7 @@ assert not torch.isinf(inputs).any()
 - [x] 深度学习的三大支柱
 
 ### 推荐实践
+
 - [ ] 实现AlexNet并训练CIFAR-10
 - [ ] 对比有/无Dropout的效果
 - [ ] 测试不同数据增强策略
@@ -452,25 +478,31 @@ assert not torch.isinf(inputs).any()
 ## 🚀 现代应用建议
 
 ### 1. 使用预训练模型
+
 ```python
 import torchvision.models as models
 model = models.alexnet(pretrained=True)
 ```
 
 ### 2. 迁移学习
-```python
+
+```bash
 # 加载预训练
+
 model = models.alexnet(pretrained=True)
 
 # 修改分类头
+
 model.classifier[6] = nn.Linear(4096, num_classes)
 
 # 冻结特征提取器
+
 for param in model.features.parameters():
     param.requires_grad = False
 ```
 
 ### 3. 替代方案
+
 - **ResNet18**: 更好、更小、更快
 - **MobileNetV2**: 移动端首选
 - **EfficientNet**: 最新SOTA

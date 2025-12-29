@@ -16,9 +16,11 @@
 ## 🚀 项目1：人脸检测与识别系统
 
 ### 项目概述
+
 构建一个完整的人脸检测与识别系统，支持实时摄像头检测和图片识别。
 
 ### 技术栈
+
 - **人脸检测**：MTCNN / RetinaFace
 - **人脸识别**：FaceNet / ArcFace
 - **部署**：OpenCV + PyQt5
@@ -26,6 +28,7 @@
 ### 实现步骤
 
 #### 1. 环境准备
+
 ```bash
 pip install opencv-python
 pip install torch torchvision
@@ -35,8 +38,10 @@ pip install PyQt5  # GUI界面
 ```
 
 #### 2. 人脸检测模块
-```python
+
+```bash
 # face_detection.py
+
 import cv2
 import torch
 from facenet_pytorch import MTCNN
@@ -73,6 +78,7 @@ class FaceDetector:
         return faces
 
 # 测试
+
 if __name__ == '__main__':
     detector = FaceDetector()
     image = cv2.imread('test.jpg')
@@ -86,8 +92,10 @@ if __name__ == '__main__':
 ```
 
 #### 3. 人脸识别模块
-```python
+
+```bash
 # face_recognition.py
+
 import torch
 from facenet_pytorch import InceptionResnetV1
 import pickle
@@ -157,6 +165,7 @@ class FaceRecognizer:
         print(f"数据库已加载: {path}, 包含 {len(self.database)} 人")
 
 # 测试
+
 if __name__ == '__main__':
     recognizer = FaceRecognizer()
     
@@ -172,8 +181,10 @@ if __name__ == '__main__':
 ```
 
 #### 4. 完整系统（带GUI）
-```python
+
+```bash
 # main_app.py
+
 import sys
 import cv2
 import threading
@@ -330,6 +341,7 @@ if __name__ == '__main__':
 ```
 
 ### 项目扩展
+
 - [ ] 添加活体检测（防止照片攻击）
 - [ ] 支持批量注册
 - [ ] 添加考勤记录功能
@@ -341,9 +353,11 @@ if __name__ == '__main__':
 ## 🎯 项目2：智能目标检测器
 
 ### 项目概述
+
 使用YOLOv8训练自定义目标检测器，支持数据标注、模型训练、评估和部署。
 
 ### 技术栈
+
 - **检测框架**：YOLOv8 (Ultralytics)
 - **数据标注**：LabelImg / CVAT
 - **部署**：ONNX / TensorRT
@@ -351,8 +365,10 @@ if __name__ == '__main__':
 ### 实现步骤
 
 #### 1. 数据准备与标注
-```python
+
+```bash
 # prepare_data.py
+
 import os
 import shutil
 import random
@@ -403,6 +419,7 @@ def prepare_yolo_dataset(raw_data_dir, output_dir):
     print(f"验证集: {len(val_images)} 张")
 
 # 创建数据集配置文件
+
 def create_dataset_yaml(output_dir, class_names):
     """创建YOLO数据集配置"""
     yaml_content = f"""
@@ -420,14 +437,17 @@ names: {class_names}
     print(f"数据集配置已创建: {output_dir}/data.yaml")
 
 # 使用示例
+
 if __name__ == '__main__':
     prepare_yolo_dataset('./raw_data', './dataset')
     create_dataset_yaml('./dataset', ['person', 'car', 'dog'])
 ```
 
 #### 2. 模型训练
-```python
+
+```bash
 # train_detector.py
+
 from ultralytics import YOLO
 import yaml
 
@@ -515,6 +535,7 @@ def predict_image(model_path, image_path, conf=0.5):
     return boxes, scores, classes
 
 # 使用示例
+
 if __name__ == '__main__':
     # 训练
     model, results = train_custom_model()
@@ -532,8 +553,10 @@ if __name__ == '__main__':
 ```
 
 #### 3. 模型部署
-```python
+
+```bash
 # deploy.py
+
 from ultralytics import YOLO
 import torch
 import onnx
@@ -650,6 +673,7 @@ class TRTDetector:
         pass
 
 # 使用示例
+
 if __name__ == '__main__':
     # 导出ONNX
     export_to_onnx('best.pt', 'best.onnx')
@@ -663,8 +687,10 @@ if __name__ == '__main__':
 ```
 
 #### 4. Web API接口
-```python
+
+```bash
 # api_server.py
+
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 import uvicorn
@@ -724,6 +750,7 @@ if __name__ == "__main__":
 ```
 
 ### 项目扩展
+
 - [ ] 实时视频检测
 - [ ] 多模型集成
 - [ ] 异常检测
@@ -735,9 +762,11 @@ if __name__ == "__main__":
 ## 🏥 项目3：医学图像分割
 
 ### 项目概述
+
 使用U-Net进行医学图像分割，支持医学图像预处理、模型训练和结果可视化。
 
 ### 技术栈
+
 - **网络架构**：U-Net / U-Net++
 - **医学图像库**：SimpleITK, pydicom
 - **数据增强**：Albumentations
@@ -745,8 +774,10 @@ if __name__ == "__main__":
 ### 实现步骤
 
 #### 1. 医学图像处理
-```python
+
+```bash
 # medical_utils.py
+
 import SimpleITK as sitk
 import pydicom
 import numpy as np
@@ -817,6 +848,7 @@ class MedicalImageProcessor:
         return resample.Execute(image)
 
 # 使用示例
+
 if __name__ == '__main__':
     processor = MedicalImageProcessor()
     
@@ -834,8 +866,10 @@ if __name__ == '__main__':
 ```
 
 #### 2. U-Net模型训练
-```python
+
+```bash
 # train_medical.py
+
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
@@ -1073,13 +1107,16 @@ def train_medical_segmentation():
             print(f'保存最佳模型，Dice={best_dice:.4f}')
 
 # 使用示例
+
 if __name__ == '__main__':
     train_medical_segmentation()
 ```
 
 #### 3. 结果可视化与评估
-```python
+
+```bash
 # visualize_medical.py
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -1166,6 +1203,7 @@ def predict_medical_image(model_path, image_path):
     return image_array[0], pred_mask
 
 # 使用示例
+
 if __name__ == '__main__':
     # 预测
     image, pred_mask = predict_medical_image('best_medical_unet.pth', 'test_scan.nii.gz')
@@ -1182,6 +1220,7 @@ if __name__ == '__main__':
 ```
 
 ### 项目扩展
+
 - [ ] 3D U-Net处理体积数据
 - [ ] 多模态融合（CT + MRI）
 - [ ] 主动学习减少标注
@@ -1193,9 +1232,11 @@ if __name__ == '__main__':
 ## 🎬 项目4：视频行为分析系统
 
 ### 项目概述
+
 构建视频分析系统，支持目标跟踪、动作识别和异常检测。
 
 ### 技术栈
+
 - **目标跟踪**：ByteTrack / DeepSORT
 - **动作识别**：SlowFast / I3D
 - **视频处理**：FFmpeg, OpenCV
@@ -1203,8 +1244,10 @@ if __name__ == '__main__':
 ### 实现步骤
 
 #### 1. 视频处理与目标跟踪
-```python
+
+```bash
 # video_tracker.py
+
 import cv2
 import numpy as np
 from ultralytics import YOLO
@@ -1325,6 +1368,7 @@ class ObjectTracker:
         return frame
 
 # 使用示例
+
 if __name__ == '__main__':
     tracker = ObjectTracker()
     cap = cv2.VideoCapture('video.mp4')
@@ -1346,8 +1390,10 @@ if __name__ == '__main__':
 ```
 
 #### 2. 动作识别
-```python
+
+```bash
 # action_recognition.py
+
 import torch
 import torch.nn as nn
 from torchvision import models
@@ -1467,6 +1513,7 @@ class ActionRecognizer:
         return self.classes[pred_class], confidence
 
 # 使用示例
+
 if __name__ == '__main__':
     recognizer = ActionRecognizer(num_classes=10)
     
@@ -1476,8 +1523,10 @@ if __name__ == '__main__':
 ```
 
 #### 3. 异常检测
-```python
+
+```bash
 # anomaly_detection.py
+
 import numpy as np
 from sklearn.ensemble import IsolationForest
 import cv2
@@ -1579,6 +1628,7 @@ class AnomalyDetector:
         return frame
 
 # 使用示例
+
 if __name__ == '__main__':
     # 1. 收集正常数据
     normal_data = []
@@ -1595,8 +1645,10 @@ if __name__ == '__main__':
 ```
 
 #### 4. 完整视频分析系统
-```python
+
+```bash
 # video_analysis_system.py
+
 import cv2
 import numpy as np
 from video_tracker import ObjectTracker
@@ -1682,6 +1734,7 @@ class VideoAnalysisSystem:
         return frame_count
 
 # 使用示例
+
 if __name__ == '__main__':
     config = {
         'detector_path': 'yolov8n.pt',
@@ -1702,6 +1755,7 @@ if __name__ == '__main__':
 ```
 
 ### 项目扩展
+
 - [ ] 多摄像头同步分析
 - [ ] 实时流处理
 - [ ] 行为预测
@@ -1713,12 +1767,14 @@ if __name__ == '__main__':
 ## 📊 项目评估标准
 
 ### 代码质量
+
 - [ ] 代码结构清晰，模块化
 - [ ] 有完整的注释和文档
 - [ ] 错误处理完善
 - [ ] 代码复用性高
 
 ### 功能完整性
+
 - [ ] 数据预处理
 - [ ] 模型训练
 - [ ] 模型评估
@@ -1726,12 +1782,14 @@ if __name__ == '__main__':
 - [ ] 部署方案
 
 ### 性能指标
+
 - [ ] 准确率达到预期
 - [ ] 推理速度满足需求
 - [ ] 资源占用合理
 - [ ] 稳定性测试通过
 
 ### 创新性
+
 - [ ] 有独特的功能设计
 - [ ] 优化现有方法
 - [ ] 解决实际问题
@@ -1742,17 +1800,20 @@ if __name__ == '__main__':
 ## 🎯 学习建议
 
 ### 项目选择
+
 1. **初学者**：从项目1开始，熟悉完整流程
 2. **进阶者**：选择项目2或3，深入特定领域
 3. **高级者**：挑战项目4，综合应用
 
 ### 实施策略
+
 1. **分阶段实现**：先完成核心功能，再添加高级特性
 2. **数据为王**：确保数据质量和数量
 3. **迭代优化**：从简单模型开始，逐步优化
 4. **记录过程**：写博客记录学习心得
 
 ### 调试技巧
+
 1. **可视化中间结果**：每步都检查输出
 2. **小数据集测试**：先用少量数据验证
 3. **日志记录**：详细记录训练过程
@@ -1763,18 +1824,21 @@ if __name__ == '__main__':
 ## 🚀 项目扩展方向
 
 ### 部署优化
+
 - [ ] 模型量化（INT8）
 - [ ] TensorRT加速
 - [ ] 边缘设备部署（Jetson）
 - [ ] Web服务化
 
 ### 功能增强
+
 - [ ] 多模型集成
 - [ ] 主动学习
 - [ ] 在线学习
 - [ ] 联邦学习
 
 ### 应用场景
+
 - [ ] 工业质检
 - [ ] 智慧城市
 - [ ] 医疗辅助

@@ -12,6 +12,7 @@
 **密集连接**: 每层的输入 = 所有前面层的特征拼接
 
 ### 核心优势
+
 1. **特征复用**: 减少冗余，提高效率
 2. **梯度流动**: 更短的梯度路径
 3. **参数效率**: 8M参数达到ResNet50的精度
@@ -225,6 +226,7 @@ class DenseNet(nn.Module):
 
 
 # 常用DenseNet变体
+
 def densenet121():
     """标准模型"""
     return DenseNet(block_config=(6, 12, 24, 16))
@@ -243,6 +245,7 @@ def densenet264():
 
 
 # 特征复用分析
+
 def analyze_feature_reuse():
     """分析DenseNet的特征复用机制"""
     model = DenseNet(growth_rate=32, block_config=(2, 2, 2, 2))
@@ -279,6 +282,7 @@ def analyze_feature_reuse():
 
 
 # 测试
+
 if __name__ == "__main__":
     model = densenet121()
     x = torch.randn(1, 3, 224, 224)
@@ -320,6 +324,7 @@ if __name__ == "__main__":
 | DenseNet264 | 32 | (6,12,64,48) | 33.3M | 6.0G | 78.0% | 超深度 |
 
 ### 参数效率对比
+
 ```
 ResNet50:  25.6M参数 → 76.2%准确率
 DenseNet121: 8.0M参数 → 75.0%准确率
@@ -342,12 +347,14 @@ DenseNet121用1/3的参数达到相近精度！
 ## 🎯 适用场景
 
 ### ✅ 推荐使用
+
 - **医学图像分割** (特征复用重要)
 - **小样本学习**
 - **资源相对充足**
 - **需要高参数效率**
 
 ### ❌ 不推荐
+
 - **内存受限环境**
 - **实时推理**
 - **超大规模数据集**
@@ -396,43 +403,55 @@ DenseNet201: 77.3% (20.0M参数)
 ## 🚀 实践建议
 
 ### 1. 使用预训练模型
+
 ```python
 import torchvision.models as models
 
 # 加载DenseNet
+
 model = models.densenet121(pretrained=True)
 
 # 修改分类头
+
 model.classifier = nn.Linear(model.classifier.in_features, num_classes)
 ```
 
 ### 2. 迁移学习
-```python
+
+```bash
 # 冻结特征提取器
+
 for param in model.parameters():
     param.requires_grad = False
 model.classifier.requires_grad = True
 
 # 或分层微调
+
 for param in model.features.denseblock4.parameters():
     param.requires_grad = True
 model.classifier.requires_grad = True
 ```
 
 ### 3. 内存优化
-```python
+
+```bash
 # 1. 减小growth_rate
+
 model = DenseNet(growth_rate=16, block_config=(6, 12, 24, 16))
 
 # 2. 减少层数
+
 model = DenseNet(growth_rate=32, block_config=(4, 8, 16, 8))
 
 # 3. 增加压缩率
+
 model = DenseNet(compression=0.3)  # 默认0.5
 
 # 4. 使用gradient checkpointing
+
 from torch.utils.checkpoint import checkpoint
 # ... 在forward中使用
+
 ```
 
 ---
@@ -440,6 +459,7 @@ from torch.utils.checkpoint import checkpoint
 ## 📊 性能基准
 
 ### CIFAR-10准确率
+
 | 模型 | 准确率 | 参数量 | 训练时间 |
 |------|--------|--------|----------|
 | DenseNet121 | 89% | 8.0M | 中等 |
@@ -447,6 +467,7 @@ from torch.utils.checkpoint import checkpoint
 | DenseNet201 | 90.5% | 20.0M | 长 |
 
 ### 内存占用对比
+
 | 模型 | 训练内存 | 推理内存 | 适用设备 |
 |------|----------|----------|----------|
 | ResNet50 | ~4GB | ~1GB | GPU/服务器 |
@@ -458,17 +479,21 @@ from torch.utils.checkpoint import checkpoint
 ## 🔧 常见问题
 
 ### 1. 内存溢出
+
 **问题**: 特征拼接导致内存消耗大
 
 **解决方案**:
-```python
+```bash
 # 1. 减小batch_size
+
 train_loader = DataLoader(dataset, batch_size=8, shuffle=True)
 
 # 2. 降低growth_rate
+
 model = DenseNet(growth_rate=16)
 
 # 3. 使用gradient checkpointing
+
 def forward(self, x):
     features = [x]
     for layer in self.layers:
@@ -479,10 +504,11 @@ def forward(self, x):
 ```
 
 ### 2. 通道爆炸
+
 **问题**: 通道数增长过快
 
 **解决方案**:
-```python
+```bash
 # 使用TransitionLayer压缩
 # 每个DenseBlock后接TransitionLayer
 # compression=0.5 将通道数减半
@@ -492,6 +518,7 @@ def forward(self, x):
 # Transition1: 256 → 128 (压缩×0.5)
 # DenseBlock2: 128 → 128 + 12×32 = 512
 # Transition2: 512 → 256 (压缩×0.5)
+
 ```
 
 ---
@@ -499,6 +526,7 @@ def forward(self, x):
 ## 🎓 学习要点
 
 ### 必须理解
+
 - [x] 密集连接的概念
 - [x] 特征复用的优势
 - [x] TransitionLayer的作用
@@ -506,6 +534,7 @@ def forward(self, x):
 - [x] 内存消耗原因
 
 ### 推荐实践
+
 - [ ] 实现DenseNet121
 - [ ] 对比ResNet和DenseNet的参数效率
 - [ ] 分析不同growth_rate的影响
@@ -517,8 +546,10 @@ def forward(self, x):
 ## 🚀 现代应用
 
 ### 1. 医学图像分割
-```python
+
+```bash
 # U-Net编码器使用DenseNet
+
 class DenseNetUNet(nn.Module):
     def __init__(self):
         super().__init__()
@@ -528,16 +559,21 @@ class DenseNetUNet(nn.Module):
 ```
 
 ### 2. 目标检测
-```python
+
+```bash
 # DenseNet作为骨干网络
+
 backbone = densenet121()
 # 用于Faster R-CNN, Mask R-CNN等
+
 ```
 
 ### 3. 小样本学习
-```python
+
+```bash
 # DenseNet的特征复用适合小样本
 # 每层都能充分利用有限的特征
+
 ```
 
 ---
@@ -545,18 +581,21 @@ backbone = densenet121()
 ## 📈 与ResNet对比总结
 
 ### 何时选择DenseNet?
+
 - ✅ 需要高参数效率
 - ✅ 内存相对充足
 - ✅ 医学图像任务
 - ✅ 小样本学习
 
 ### 何时选择ResNet?
+
 - ✅ 需要快速推理
 - ✅ 内存受限
 - ✅ 工业部署
 - ✅ 通用任务
 
 ### 性能对比
+
 ```
 参数量: DenseNet121 < ResNet50
 精度: DenseNet121 ≈ ResNet50

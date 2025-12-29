@@ -21,6 +21,7 @@
 ### 阶段一：基础概念（1天）
 
 #### 1. 图像分割任务定义
+
 ```python
 """
 图像分割类型：
@@ -83,6 +84,7 @@ def visualize_segmentation_types():
     return fig
 
 # 数据格式示例
+
 def segmentation_data_format():
     """分割数据格式"""
     
@@ -107,6 +109,7 @@ def segmentation_data_format():
 ### 阶段二：语义分割（3-4天）
 
 #### 2. FCN (Fully Convolutional Network)
+
 **核心创新**：全卷积网络，任意尺寸输入
 
 ```python
@@ -191,6 +194,7 @@ class FCN32s(nn.Module):
         return output
 
 # FCN-8s：融合多层特征
+
 class FCN8s(nn.Module):
     """
     FCN-8s：融合pool3, pool4, pool5的特征
@@ -242,6 +246,7 @@ class FCN8s(nn.Module):
 ---
 
 #### 3. U-Net
+
 **核心创新**：编码器-解码器 + 跳跃连接
 
 ```python
@@ -336,6 +341,7 @@ class UNet(nn.Module):
         return output
 
 # U-Net++：嵌套U-Net
+
 class UNetPlusPlus(nn.Module):
     """
     U-Net++：嵌套的U-Net结构
@@ -391,6 +397,7 @@ class UNetPlusPlus(nn.Module):
 #### 4. DeepLab系列
 
 ##### 4.1 DeepLabv1/v2
+
 **核心创新**：空洞卷积 + ASPP
 
 ```python
@@ -489,6 +496,7 @@ class DeepLabv2(nn.Module):
 ---
 
 ##### 4.2 DeepLabv3+
+
 **核心创新**：编码器-解码器结构
 
 ```python
@@ -591,6 +599,7 @@ class DeepLabv3Plus(nn.Module):
 ### 阶段三：实例分割（2-3天）
 
 #### 5. Mask R-CNN
+
 **核心创新**：Faster R-CNN + 掩码分支
 
 ```python
@@ -677,6 +686,7 @@ class MaskRCNN(nn.Module):
         return torch.tensor(rois, dtype=torch.float32)
 
 # ROI Align实现
+
 class RoIAlign(nn.Module):
     def __init__(self, output_size, spatial_scale, sampling_ratio):
         super(RoIAlign, self).__init__()
@@ -721,6 +731,7 @@ class RoIAlign(nn.Module):
 ---
 
 #### 6. SOLO (Segmenting Objects by Locations)
+
 **核心创新**：位置感知分割
 
 ```python
@@ -811,6 +822,7 @@ class SOLO(nn.Module):
 ### 阶段四：评估指标（1天）
 
 #### 7. Dice系数和IoU
+
 ```python
 def dice_coefficient(pred, target, smooth=1e-6):
     """
@@ -856,6 +868,7 @@ def miou_score(pred, target, num_classes):
     return np.mean(ious) if ious else 0
 
 # 使用示例
+
 def evaluate_segmentation():
     """评估分割结果"""
     # 模拟预测和真实标签
@@ -874,6 +887,7 @@ def evaluate_segmentation():
 ```
 
 #### 8. 完整评估器
+
 ```python
 class SegmentationMetrics:
     """分割评估器"""
@@ -930,6 +944,7 @@ class SegmentationMetrics:
         }
 
 # 使用示例
+
 def evaluate_model_performance(model, dataloader, num_classes):
     """评估模型性能"""
     metrics = SegmentationMetrics(num_classes)
@@ -1174,6 +1189,7 @@ def train_remote_sensing_segmentation():
 ## 🔍 调试技巧
 
 ### 1. 分割质量分析
+
 ```python
 def analyze_segmentation_errors(pred, target):
     """分析分割错误类型"""
@@ -1199,6 +1215,7 @@ def analyze_segmentation_errors(pred, target):
     return errors
 
 # 可视化错误
+
 def visualize_errors(pred, target):
     """可视化分割错误"""
     fig, axes = plt.subplots(1, 4, figsize=(12, 3))
@@ -1227,6 +1244,7 @@ def visualize_errors(pred, target):
 ```
 
 ### 2. 训练监控
+
 ```python
 def monitor_segmentation_training(log_file):
     """监控分割训练过程"""
@@ -1279,6 +1297,7 @@ def monitor_segmentation_training(log_file):
 ## 📚 学习检查清单
 
 ### 理解层面
+
 - [ ] 理解语义分割和实例分割的区别
 - [ ] 掌握U-Net的编码器-解码器结构
 - [ ] 理解空洞卷积的作用
@@ -1286,6 +1305,7 @@ def monitor_segmentation_training(log_file):
 - [ ] 了解Dice系数和IoU的计算
 
 ### 实践层面
+
 - [ ] 能实现U-Net网络
 - [ ] 会训练医学图像分割模型
 - [ ] 能调试分割质量问题
@@ -1293,6 +1313,7 @@ def monitor_segmentation_training(log_file):
 - [ ] 掌握数据预处理技巧
 
 ### 进阶层面
+
 - [ ] 理解DeepLab系列演进
 - [ ] 掌握实例分割技术
 - [ ] 会优化分割边界
@@ -1305,11 +1326,13 @@ def monitor_segmentation_training(log_file):
 完成本章后，你可以继续学习：
 
 ### 08-姿态估计
+
 - 人体关键点检测
 - OpenPose、HRNet
 - 行为识别
 
 ### 09-视频分析
+
 - 目标跟踪
 - 动作识别
 - 视频分割
@@ -1319,6 +1342,7 @@ def monitor_segmentation_training(log_file):
 ## 📖 扩展资源
 
 ### 经典论文
+
 1. **FCN**: "Fully Convolutional Networks for Semantic Segmentation" (2015)
 2. **U-Net**: "U-Net: Convolutional Networks for Biomedical Image Segmentation" (2015)
 3. **DeepLabv1**: "Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs" (2015)
@@ -1328,11 +1352,13 @@ def monitor_segmentation_training(log_file):
 7. **SOLO**: "SOLO: Segmenting Objects by Locations" (2020)
 
 ### 开源实现
+
 - **Segmentation Models**: https://github.com/qubvel/segmentation_models
 - **MMSegmentation**: https://github.com/open-mmlab/mmsegmentation
 - **Detectron2**: https://github.com/facebookresearch/detectron2
 
 ### 数据集
+
 - **Cityscapes**: 城市街景语义分割
 - **ADE20K**: 场景解析
 - **PASCAL VOC**: 语义分割

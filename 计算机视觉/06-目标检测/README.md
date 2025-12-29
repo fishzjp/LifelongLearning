@@ -20,6 +20,7 @@
 ### 阶段一：基础概念（1天）
 
 #### 1. 目标检测任务定义
+
 ```python
 """
 目标检测 vs 图像分类
@@ -28,6 +29,7 @@
 """
 
 # 数据格式示例
+
 annotation = {
     'image_id': 1,
     'boxes': [[100, 150, 200, 250], [300, 400, 150, 180]],  # [x, y, w, h]
@@ -36,6 +38,7 @@ annotation = {
 }
 
 # 可视化
+
 def visualize_detection(image, boxes, labels, scores=None, class_names=None):
     """可视化检测结果"""
     import matplotlib.pyplot as plt
@@ -67,6 +70,7 @@ def visualize_detection(image, boxes, labels, scores=None, class_names=None):
 ```
 
 #### 2. 核心挑战
+
 ```python
 """
 目标检测的三大挑战：
@@ -76,6 +80,7 @@ def visualize_detection(image, boxes, labels, scores=None, class_names=None):
 """
 
 # 多尺度检测示例
+
 def multi_scale_detection_demo():
     """展示多尺度检测的困难"""
     scales = ['小物体(32x32)', '中物体(64x64)', '大物体(128x128)']
@@ -95,6 +100,7 @@ def multi_scale_detection_demo():
 #### 3. R-CNN系列演进
 
 ##### 3.1 R-CNN (2014)
+
 **核心思想**：区域建议 + CNN特征提取 + SVM分类
 
 ```python
@@ -175,6 +181,7 @@ class RCNN:
 ---
 
 ##### 3.2 Fast R-CNN (2015)
+
 **核心改进**：共享卷积特征 + ROI Pooling + 端到端训练
 
 ```python
@@ -282,6 +289,7 @@ class FastRCNN(nn.Module):
         return cls_scores, bbox_preds
 
 # 损失函数
+
 class FastRCNNLoss(nn.Module):
     def __init__(self):
         super(FastRCNNLoss, self).__init__()
@@ -319,6 +327,7 @@ class FastRCNNLoss(nn.Module):
 ---
 
 ##### 3.3 Faster R-CNN (2016)
+
 **核心创新**：RPN（区域建议网络）实现端到端
 
 ```python
@@ -464,6 +473,7 @@ class FasterRCNN(nn.Module):
 ---
 
 ##### 3.4 Mask R-CNN (2017)
+
 **核心创新**：增加掩码分支，实现实例分割
 
 ```python
@@ -526,6 +536,7 @@ class MaskRCNN(FasterRCNN):
         return cls_scores, bbox_preds, mask_preds, rois
 
 # 损失函数
+
 class MaskRCNNLoss(nn.Module):
     def __init__(self):
         super(MaskRCNNLoss, self).__init__()
@@ -553,6 +564,7 @@ class MaskRCNNLoss(nn.Module):
 #### 4. YOLO系列
 
 ##### 4.1 YOLOv1 (2016)
+
 **核心思想**：将检测视为回归问题，一次性预测所有信息
 
 ```python
@@ -615,6 +627,7 @@ class YOLOv1(nn.Module):
         return predictions
 
 # 损失函数
+
 class YOLOv1Loss(nn.Module):
     def __init__(self, S=7, B=2, C=20, lambda_coord=5, lambda_noobj=0.5):
         super(YOLOv1Loss, self).__init__()
@@ -692,6 +705,7 @@ class YOLOv1Loss(nn.Module):
 ---
 
 ##### 4.2 YOLOv2/YOLO9000 (2017)
+
 **核心改进**：批量归一化、高分辨率分类器、锚框机制
 
 ```python
@@ -771,6 +785,7 @@ class YOLOv2(nn.Module):
         return predictions
 
 # 锚框聚类
+
 def kmeans_anchors(boxes, k=5):
     """
     使用K-means聚类得到最佳锚框尺寸
@@ -797,6 +812,7 @@ def kmeans_anchors(boxes, k=5):
     return centroids
 
 # 使用示例
+
 def prepare_anchors():
     # 收集所有训练集的GT框尺寸
     all_boxes = []
@@ -814,6 +830,7 @@ def prepare_anchors():
 ---
 
 ##### 4.3 YOLOv3 (2018)
+
 **核心创新**：多尺度预测、Darknet-53、更好的分类器
 
 ```python
@@ -960,6 +977,7 @@ class ResidualBlock(nn.Module):
 ---
 
 ##### 4.4 YOLOv4/v5/v8 (2020-2023)
+
 **现代YOLO演进**：
 
 ```python
@@ -987,6 +1005,7 @@ YOLOv8:
 """
 
 # 现代YOLO使用示例（伪代码）
+
 def modern_yolo_usage():
     """
     现代YOLO使用方式（以YOLOv8为例）
@@ -1027,6 +1046,7 @@ def modern_yolo_usage():
 ---
 
 #### 5. SSD (Single Shot MultiBox Detector)
+
 **核心思想**：多尺度特征图 + 默认框（Default Boxes）
 
 ```python
@@ -1153,6 +1173,7 @@ class SSD(nn.Module):
         return predictions
 
 # SSD损失函数
+
 class SSDLoss(nn.Module):
     def __init__(self, neg_pos_ratio=3):
         super(SSDLoss, self).__init__()
@@ -1218,6 +1239,7 @@ class SSDLoss(nn.Module):
 ---
 
 #### 6. RetinaNet
+
 **核心创新**：Focal Loss解决类别不平衡问题
 
 ```python
@@ -1329,6 +1351,7 @@ class RetinaNet(nn.Module):
 ## 📊 评估指标详解
 
 ### 1. IoU (Intersection over Union)
+
 ```python
 def calculate_iou(box1, box2):
     """
@@ -1352,6 +1375,7 @@ def calculate_iou(box1, box2):
     return intersection / union if union > 0 else 0
 
 # 示例
+
 box1 = [50, 50, 150, 150]
 box2 = [60, 60, 140, 140]
 iou = calculate_iou(box1, box2)
@@ -1359,6 +1383,7 @@ print(f"IoU: {iou:.3f}")  # 0.64
 ```
 
 ### 2. mAP (mean Average Precision)
+
 ```python
 class MAPCalculator:
     """
@@ -1436,6 +1461,7 @@ class MAPCalculator:
         return np.mean(aps)
 
 # 使用示例
+
 def evaluate_detection():
     """评估检测结果"""
     evaluator = MAPCalculator(iou_threshold=0.5)
@@ -1450,6 +1476,7 @@ def evaluate_detection():
 ```
 
 ### 3. PR曲线
+
 ```python
 def plot_pr_curve(precision, recall):
     """绘制PR曲线"""
@@ -1470,6 +1497,7 @@ def plot_pr_curve(precision, recall):
     return plt.gcf()
 
 # 示例数据
+
 precision = [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
 recall = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
@@ -1494,6 +1522,7 @@ fig = plot_pr_curve(precision, recall)
 """
 
 # 1. 数据集格式（YOLO格式）
+
 """
 dataset/
 ├── images/
@@ -1505,6 +1534,7 @@ dataset/
 └── data.yaml
 
 # data.yaml
+
 train: ./images/train
 val: ./images/val
 nc: 3  # 类别数
@@ -1512,9 +1542,11 @@ names: ['person', 'car', 'dog']  # 类别名
 
 # 标注文件格式：class x_center y_center width height (归一化)
 # 例如：0 0.5 0.5 0.3 0.4
+
 """
 
 # 2. 训练脚本
+
 def train_yolov5():
     """训练YOLOv5"""
     from ultralytics import YOLO
@@ -1545,6 +1577,7 @@ def train_yolov5():
     return model
 
 # 3. 推理
+
 def predict_with_yolov5(model, image_path):
     """使用训练好的模型预测"""
     results = model(image_path)
@@ -1566,6 +1599,7 @@ def predict_with_yolov5(model, image_path):
     return boxes, scores, classes
 
 # 4. 评估
+
 def evaluate_model(model, val_data):
     """评估模型性能"""
     metrics = model.val(data=val_data)
@@ -1578,6 +1612,7 @@ def evaluate_model(model, val_data):
     return metrics
 
 # 5. 导出部署
+
 def export_model(model):
     """导出模型"""
     # 导出为ONNX
@@ -1676,6 +1711,7 @@ def train_on_custom_data():
 ## 🔍 调试技巧
 
 ### 1. 检测失败分析
+
 ```python
 def analyze_detection_failures(predictions, ground_truths):
     """分析检测失败原因"""
@@ -1715,6 +1751,7 @@ def analyze_detection_failures(predictions, ground_truths):
     return issues
 
 # 使用
+
 issues = analyze_detection_failures(predictions, ground_truths)
 print("检测问题分析:")
 for issue, count in issues.items():
@@ -1722,6 +1759,7 @@ for issue, count in issues.items():
 ```
 
 ### 2. 训练监控
+
 ```python
 def monitor_training(log_file):
     """监控训练过程"""
@@ -1770,6 +1808,7 @@ def monitor_training(log_file):
 ## 📚 学习检查清单
 
 ### 理解层面
+
 - [ ] 理解两阶段 vs 单阶段检测器的区别
 - [ ] 掌握RPN的工作原理
 - [ ] 理解锚框机制和作用
@@ -1777,6 +1816,7 @@ def monitor_training(log_file):
 - [ ] 了解YOLO系列演进
 
 ### 实践层面
+
 - [ ] 能实现R-CNN系列算法
 - [ ] 会训练YOLO检测器
 - [ ] 能调试检测问题
@@ -1784,6 +1824,7 @@ def monitor_training(log_file):
 - [ ] 掌握数据标注和格式转换
 
 ### 进阶层面
+
 - [ ] 理解Focal Loss原理
 - [ ] 掌握多尺度检测技巧
 - [ ] 会优化检测速度
@@ -1796,11 +1837,13 @@ def monitor_training(log_file):
 完成本章后，你可以继续学习：
 
 ### 07-图像分割
+
 - 语义分割：U-Net、DeepLab
 - 实例分割：Mask R-CNN
 - 医学图像应用
 
 ### 08-姿态估计
+
 - 人体关键点检测
 - OpenPose、HRNet
 - 行为识别
@@ -1810,6 +1853,7 @@ def monitor_training(log_file):
 ## 📖 扩展资源
 
 ### 经典论文
+
 1. **R-CNN**: "Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation" (2014)
 2. **Fast R-CNN**: "Fast R-CNN" (2015)
 3. **Faster R-CNN**: "Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks" (2016)
@@ -1819,12 +1863,14 @@ def monitor_training(log_file):
 7. **RetinaNet**: "Focal Loss for Dense Object Detection" (2017)
 
 ### 开源实现
+
 - **YOLOv5/v8**: https://github.com/ultralytics/ultralytics
 - **Detectron2**: https://github.com/facebookresearch/detectron2
 - **MMDetection**: https://github.com/open-mmlab/mmdetection
 - **TensorFlow Object Detection API**: https://github.com/tensorflow/models
 
 ### 数据集
+
 - **COCO**: 80类，120K图像，800K物体
 - **PASCAL VOC**: 20类，11K图像，27K物体
 - **Open Images**: 600类，9M图像

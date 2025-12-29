@@ -39,6 +39,7 @@
 ## 🎯 学习路径建议
 
 ### 初学者（0基础）
+
 ```
 第1天：图像表示 + 基础操作
 第2天：颜色空间 + 几何变换
@@ -50,6 +51,7 @@
 ```
 
 ### 进阶学习者
+
 ```
 第1天：快速复习基础
 第2天：频域滤波深入
@@ -59,6 +61,7 @@
 ```
 
 ### 实战开发者
+
 ```
 第1天：快速浏览
 第2-3天：综合案例深度学习
@@ -70,70 +73,91 @@
 ## 🔧 核心技术速查
 
 ### 1. 图像表示
-```python
+
+```bash
 # 灰度图像
+
 img = np.array([[0, 128, 255]], dtype=np.uint8)
 
 # 彩色图像
+
 img = np.array([[[255, 0, 0], [0, 255, 0]]], dtype=np.uint8)
 
 # 属性
+
 shape = img.shape  # (H, W) 或 (H, W, C)
 dtype = img.dtype  # uint8
 size = img.nbytes  # 字节数
 ```
 
 ### 2. 常用滤波器
-```python
+
+```bash
 # 均值滤波
+
 kernel = np.ones((3, 3)) / 9
 
 # 高斯滤波
+
 from scipy.ndimage import gaussian_filter
 result = gaussian_filter(img, sigma=1)
 
 # 中值滤波
+
 from scipy.ndimage import median_filter
 result = median_filter(img, size=3)
 
 # 双边滤波
 # 需要自定义或使用OpenCV
+
 ```
 
 ### 3. 边缘检测
-```python
+
+```bash
 # Sobel
+
 sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
 sobel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
 
 # Canny（简化）
+
 edges = canny_edge_detector(img, low=30, high=70)
 ```
 
 ### 4. 角点检测
-```python
+
+```bash
 # Harris
+
 corners, response = harris_corner_detector(img, k=0.04)
 
 # Shi-Tomasi
+
 corners = shi_tomasi_detector(img, max_corners=100)
 
 # FAST
+
 corners = fast_corner_detector(img, threshold=20, n=12)
 ```
 
 ### 5. 形态学操作
-```python
+
+```bash
 # 腐蚀
+
 eroded = binary_erosion(img, structure=np.ones((3,3)))
 
 # 膨胀
+
 dilated = binary_dilation(img, structure=np.ones((3,3)))
 
 # 开运算
+
 opened = binary_opening(img, structure=np.ones((3,3)))
 
 # 闭运算
+
 closed = binary_closing(img, structure=np.ones((3,3)))
 ```
 
@@ -158,34 +182,44 @@ closed = binary_closing(img, structure=np.ones((3,3)))
 ## 💡 实践建议
 
 ### 1. 代码运行
+
 ```bash
 # 每个代码块都可以独立运行
+
 python -c "
 import numpy as np
 import matplotlib.pyplot as plt
 # 复制粘贴代码
+
 "
 ```
 
 ### 2. 参数实验
-```python
+
+```bash
 # 尝试不同参数
+
 for sigma in [0.5, 1.0, 2.0, 3.0]:
     result = gaussian_filter(img, sigma=sigma)
     # 观察效果差异
 ```
 
 ### 3. 真实图像测试
-```python
+
+```bash
 # 使用自己的照片
+
 img = plt.imread('your_photo.jpg')
 # 转换为灰度
+
 if len(img.shape) == 3:
     img = img.mean(axis=2)
 # 应用学到的技术
+
 ```
 
 ### 4. 性能对比
+
 ```python
 import time
 
@@ -216,11 +250,13 @@ A: 尝试不同的结构元素大小和形状
 ## 📚 扩展学习资源
 
 ### 理论深入
+
 - 《数字图像处理》冈萨雷斯
 - 《计算机视觉：算法与应用》
 - OpenCV官方文档
 
 ### 实践项目
+
 - 文档扫描APP
 - 人脸美颜相机
 - 车牌识别系统
@@ -228,6 +264,7 @@ A: 尝试不同的结构元素大小和形状
 - 运动检测监控
 
 ### 进阶方向
+
 - 深度学习特征
 - 3D视觉
 - 视频分析
@@ -268,16 +305,19 @@ A: 尝试不同的结构元素大小和形状
 ## 📝 课后作业
 
 ### 基础作业
+
 1. 实现所有代码示例
 2. 修改参数观察效果
 3. 记录不同滤波器的性能
 
 ### 进阶作业
+
 1. 创建自己的测试图像集
 2. 实现一个完整的文档扫描流程
 3. 开发简单的人脸美化工具
 
 ### 挑战作业
+
 1. 实现多图像自动拼接
 2. 开发实时运动检测系统
 3. 优化算法性能（速度提升2倍）
@@ -287,11 +327,13 @@ A: 尝试不同的结构元素大小和形状
 ## 🔄 复习建议
 
 ### 每周复习
+
 - 周一：复习基础操作
 - 周三：练习滤波增强
 - 周五：实战案例
 
 ### 每月复习
+
 - 完整重写所有代码
 - 尝试新算法
 - 参与开源项目

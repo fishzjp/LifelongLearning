@@ -29,8 +29,9 @@
 **相关术语**：UAT, Beta Testing, User Testing
 
 **示例**：
-```python
+```bash
 # 验收测试示例：用户能否成功下单
+
 def test_user_can_create_order():
     """用户能够成功创建订单（验收标准）"""
     user = User("test@example.com")
@@ -124,10 +125,11 @@ def test_login_api():
 - 无法完全替代人工（用户体验、探索性测试）
 
 **示例**：
-```python
+```bash
 # 重复执行100次登录测试
 # 人工：2小时
 # 自动化：2分钟
+
 ```
 
 ---
@@ -153,8 +155,9 @@ def test_login_api():
 - ✅ 关注功能正确性
 
 **示例**：
-```python
+```bash
 # 黑盒测试：只关心输入输出
+
 def test_login_black_box():
     result = login_service.login("user", "pass")
     assert result.success == True  # 不关心内部如何验证
@@ -223,8 +226,9 @@ def test_login_black_box():
 **相关术语**：Cross-browser Testing, Mobile Testing
 
 **示例**：
-```python
+```bash
 # 测试在不同浏览器的登录功能
+
 @pytest.mark.parametrize("browser", ["chrome", "firefox", "safari"])
 def test_login_on_different_browsers(browser):
     driver = get_driver(browser)
@@ -279,9 +283,11 @@ def test_login_on_different_browsers(browser):
 **示例**：
 ```bash
 # 生成覆盖率报告
+
 pytest --cov=src --cov-report=html
 
 # 查看报告
+
 open htmlcov/index.html
 ```
 
@@ -320,8 +326,9 @@ open htmlcov/index.html
 **难度**：⭐⭐⭐
 
 **示例**：
-```python
+```bash
 # 使用pytest的parametrize
+
 import pytest
 
 test_data = [
@@ -422,15 +429,17 @@ def test_complete_shopping_flow():
 **难度**：⭐⭐
 
 **示例**：
-```python
+```bash
 # 用户名：6-20位字符
 
 # 有效等价类
+
 - 6位：abcdef
 - 10位：abcdefghij
 - 20位：abcdefghijklmnopqrst
 
 # 无效等价类
+
 - 5位：abcde（太短）
 - 21位：abcdefghijklmnopqrstu（太长）
 - 空值：""（空字符串）
@@ -546,8 +555,9 @@ def test_search_function():
 **场景**：正常流程测试
 
 **示例**：
-```python
+```bash
 # 用户登录的快乐路径
+
 def test_login_happy_path():
     """快乐路径：正确用户名+正确密码"""
     result = login("admin", "123456")
@@ -752,12 +762,14 @@ def test_login_negative():
 **定义**：集中管理UI元素定位信息的机制。
 
 **示例**：
-```python
+```bash
 # 不使用对象库
+
 driver.find_element(By.ID, "username")
 driver.find_element(By.ID, "password")
 
 # 使用对象库
+
 class LoginPage:
     USERNAME = (By.ID, "username")
     PASSWORD = (By.ID, "password")
@@ -797,6 +809,7 @@ class LoginPage:
         return HomePage(self.driver)
 
 # 使用
+
 login_page = LoginPage(driver)
 login_page.login("admin", "123456")
 ```
@@ -917,8 +930,9 @@ login_page.login("admin", "123456")
 **自动化价值**：⭐⭐⭐⭐⭐（非常适合自动化）
 
 **示例**：
-```python
+```bash
 # 每次代码提交后自动运行
+
 def test_regression_login():
     """回归测试：登录功能"""
     # 确保登录功能在代码修改后仍然正常
@@ -1030,9 +1044,10 @@ def test_smoke():
 **难度**：⭐⭐⭐⭐
 
 **示例**：
-```python
+```bash
 # 1000并发用户访问
 # 观察响应时间、错误率、资源使用
+
 ```
 
 ---
@@ -1066,7 +1081,7 @@ def test_smoke():
 **模板**：见[测试用例模板](../templates/test-case-template.md)
 
 **示例**：
-```markdown
+```python
 用例编号：TC-LOGIN-001
 测试目标：验证正确凭证登录成功
 前置条件：用户账号已注册
@@ -1133,8 +1148,9 @@ def test_smoke():
 **定义**：一组相关的测试用例的集合。
 
 **示例**：
-```python
+```bash
 # 登录相关的所有测试
+
 test_suite = [
     test_login_success,
     test_login_wrong_password,
@@ -1363,21 +1379,25 @@ def test_xss_prevention():
 ## 🎯 新人学习路径
 
 ### 第一周：掌握基础术语
+
 1. 阅读 A-C 部分
 2. 理解核心概念：Test Case, Bug, Black Box Testing
 3. 实践：编写第一个测试用例
 
 ### 第二周：扩展知识
+
 1. 阅读 D-H 部分
 2. 理解：Automation, Integration, Performance
 3. 实践：运行自动化测试
 
 ### 第三周：进阶概念
+
 1. 阅读 I-Q 部分
 2. 理解：Pyramid, Strategy, TDD
 3. 实践：设计测试策略
 
 ### 第四周：高级主题
+
 1. 阅读 R-Z 部分
 2. 理解：Security, Stress, Reliability
 3. 实践：性能测试
@@ -1387,15 +1407,18 @@ def test_xss_prevention():
 ## 💡 常见问题
 
 ### Q: 术语太多记不住怎么办？
+
 **A**: 不需要死记硬背，遇到不懂的再查。用多了自然就记住了。
 
 ### Q: 有些术语看起来很相似，怎么区分？
+
 **A**: 查看对比部分，如：
 - QA vs QC
 - Validation vs Verification
 - Alpha vs Beta Testing
 
 ### Q: 如何快速查找？
+
 **A**:
 1. 使用浏览器搜索（Ctrl+F）
 2. 按字母索引定位
@@ -1406,9 +1429,11 @@ def test_xss_prevention():
 ## 🔄 术语更新
 
 ### 新增术语
+
 如果你发现新的术语或更好的解释，欢迎贡献！
 
 ### 术语反馈
+
 - 哪些术语最常用？
 - 哪些解释不清楚？
 - 需要添加哪些新术语？

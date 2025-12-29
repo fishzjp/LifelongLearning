@@ -95,24 +95,28 @@
 ### 在线课程
 
 #### 1. 斯坦福 CS231n
+
 - **链接**: http://cs231n.stanford.edu/
 - **内容**: CNN基础、图像分类、目标检测
 - **特点**: 理论深入，作业经典
 - **适合**: 有Python基础，想深入理解原理
 
 #### 2. Fast.ai
+
 - **链接**: https://www.fast.ai/
 - **内容**: 实用深度学习，从实践到理论
 - **特点**: 自顶向下教学，代码驱动
 - **适合**: 想快速上手项目的学习者
 
 #### 3. 吴恩达深度学习
+
 - **链接**: https://www.coursera.org/specializations/deep-learning
 - **内容**: 神经网络基础、优化算法、CNN
 - **特点**: 系统性强，讲解清晰
 - **适合**: 零基础系统学习
 
 #### 4. PyTorch官方教程
+
 - **链接**: https://pytorch.org/tutorials/
 - **内容**: PyTorch基础、CV应用、生成模型
 - **特点**: 官方维护，代码质量高
@@ -186,55 +190,61 @@
 ### 1. 综合框架
 
 #### **MMDetection** - 目标检测工具箱
+
 - **链接**: https://github.com/open-mmlab/mmdetection
 - **特点**: 模块化设计，支持众多算法
 - **使用**: 
-  ```bash
+```bash
   pip install mmdet
   # 配置文件 + 命令行训练
-  ```
+```
 
 #### **MMSegmentation** - 图像分割工具箱
+
 - **链接**: https://github.com/open-mmlab/mmsegmentation
 - **特点**: 统一接口，易于扩展
 - **使用**:
-  ```bash
+```bash
   pip install mmseg
-  ```
+```
 
 #### **Detectron2** - Facebook检测框架
+
 - **链接**: https://github.com/facebookresearch/detectron2
 - **特点**: PyTorch实现，性能优秀
 - **使用**:
-  ```python
+```python
   from detectron2 import model_zoo
   from detectron2.engine import DefaultPredictor
-  ```
+```
 
 ---
 
 ### 2. 专项项目
 
 #### **YOLOv8** - 最新YOLO实现
+
 - **链接**: https://github.com/ultralytics/ultralytics
 - **特点**: 易用性强，支持检测/分割/姿态
 - **使用**:
-  ```python
+```python
   from ultralytics import YOLO
   model = YOLO('yolov8n.pt')
   model.train(data='coco.yaml', epochs=100)
-  ```
+```
 
 #### **Segmentation Models** - 分割模型库
+
 - **链接**: https://github.com/qubvel/segmentation_models
 - **特点**: 预训练模型，简单API
 - **使用**:
-  ```python
+```python
   import segmentation_models as sm
   model = sm.Unet('resnet34', classes=1)
-  ```
+```
 
 #### **OpenMMLab** 系列
+
 - **MMDetection**: 目标检测
 - **MMSegmentation**: 语义分割
 - **MMAction2**: 视频分析
@@ -246,34 +256,37 @@
 ### 3. 实用工具
 
 #### **Albumentations** - 数据增强
+
 - **链接**: https://github.com/albumentations-team/albumentations
 - **特点**: 速度快，功能丰富
 - **使用**:
-  ```python
+```python
   import albumentations as A
   transform = A.Compose([
       A.HorizontalFlip(p=0.5),
       A.RandomBrightnessContrast(p=0.2),
   ])
-  ```
+```
 
 #### **Weights & Biases** - 实验跟踪
+
 - **链接**: https://github.com/wandb/wandb
 - **特点**: 可视化训练过程
 - **使用**:
-  ```python
+```python
   import wandb
   wandb.init(project="my-project")
-  ```
+```
 
 #### **TensorBoard** - 可视化
+
 - **链接**: https://www.tensorflow.org/tensorboard
 - **特点**: 官方可视化工具
 - **使用**:
-  ```python
+```python
   from torch.utils.tensorboard import SummaryWriter
   writer = SummaryWriter()
-  ```
+```
 
 ---
 
@@ -282,18 +295,21 @@
 ### 1. 通用图像分类
 
 #### **ImageNet**
+
 - **规模**: 1400万图像，1000类
 - **链接**: https://www.image-net.org/
 - **用途**: 预训练基准
 - **下载**: 需申请，约150GB
 
 #### **CIFAR-10/100**
+
 - **规模**: 6万图像，10/100类
 - **链接**: https://www.cs.toronto.edu/~kriz/cifar.html
 - **用途**: 快速实验
 - **特点**: 小尺寸，易下载
 
 #### **MNIST**
+
 - **规模**: 7万手写数字
 - **链接**: http://yann.lecun.com/exdb/mnist/
 - **用途**: 入门练习
@@ -304,18 +320,21 @@
 ### 2. 目标检测
 
 #### **COCO (Common Objects in Context)**
+
 - **规模**: 33万图像，80类，150万实例
 - **链接**: https://cocodataset.org/
 - **用途**: 检测/分割/姿态估计
 - **特点**: 场景丰富，标注详细
 
 #### **PASCAL VOC**
+
 - **规模**: 1.1万图像，20类
 - **链接**: http://host.robots.ox.ac.uk/pascal/VOC/
 - **用途**: 检测/分割
 - **特点**: 经典，易上手
 
 #### **Open Images**
+
 - **规模**: 900万图像，600类
 - **链接**: https://storage.googleapis.com/openimages/web/index.html
 - **用途**: 大规模检测
@@ -326,18 +345,21 @@
 ### 3. 图像分割
 
 #### **Cityscapes**
+
 - **规模**: 2.5万图像，19类
 - **链接**: https://www.cityscapes-dataset.com/
 - **用途**: 语义分割
 - **特点**: 城市街景，精细标注
 
 #### **ADE20K**
+
 - **规模**: 2.5万图像，150类
 - **链接**: https://groups.csail.mit.edu/vision/datasets/ADE20K/
 - **用途**: 场景解析
 - **特点**: 场景多样，标注全面
 
 #### **ISBI Challenge**
+
 - **规模**: 细胞显微镜图像
 - **链接**: https://biomedicalimaging.org/2012/challenge/
 - **用途**: 医学图像分割
@@ -348,12 +370,14 @@
 ### 4. 人脸数据集
 
 #### **LFW (Labeled Faces in the Wild)**
+
 - **规模**: 1.3万图像，5749人
 - **链接**: http://vis-www.cs.umass.edu/lfw/
 - **用途**: 人脸识别
 - **特点**: 自然场景
 
 #### **CelebA**
+
 - **规模**: 20万图像，1万名人
 - **链接**: https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html
 - **用途**: 人脸属性
@@ -364,12 +388,14 @@
 ### 5. 视频数据集
 
 #### **Kinetics**
+
 - **规模**: 30万视频片段，400/600/700类
 - **链接**: https://deepmind.com/research/open-source/kinetics
 - **用途**: 动作识别
 - **特点**: 高质量，大规模
 
 #### **UCF101**
+
 - **规模**: 1.3万视频，101类
 - **链接**: https://www.crcv.ucf.edu/data/UCF101.php
 - **用途**: 动作识别
@@ -382,16 +408,19 @@
 ### 1. 深度学习框架
 
 #### **PyTorch**
+
 - **官网**: https://pytorch.org/
 - **特点**: 动态图，易调试
 - **推荐**: 研究和开发
 
 #### **TensorFlow**
+
 - **官网**: https://www.tensorflow.org/
 - **特点**: 生态完善，部署方便
 - **推荐**: 工业部署
 
 #### **Keras**
+
 - **官网**: https://keras.io/
 - **特点**: 高级API，简洁易用
 - **推荐**: 快速原型
@@ -401,16 +430,19 @@
 ### 2. 图像处理
 
 #### **OpenCV**
+
 - **官网**: https://opencv.org/
 - **特点**: 功能全面，C++/Python
 - **核心**: 图像处理、计算机视觉
 
 #### **Pillow (PIL)**
+
 - **官网**: https://python-pillow.org/
 - **特点**: 简单图像处理
 - **核心**: 读写、基本变换
 
 #### **scikit-image**
+
 - **官网**: https://scikit-image.org/
 - **特点**: 科学计算风格
 - **核心**: 算法实现
@@ -420,16 +452,19 @@
 ### 3. 科学计算
 
 #### **NumPy**
+
 - **官网**: https://numpy.org/
 - **特点**: 数组运算基础
 - **核心**: 矩阵操作
 
 #### **SciPy**
+
 - **官网**: https://scipy.org/
 - **特点**: 科学计算工具箱
 - **核心**: 信号处理、优化
 
 #### **Matplotlib**
+
 - **官网**: https://matplotlib.org/
 - **特点**: 绘图可视化
 - **核心**: 2D绘图
@@ -439,16 +474,19 @@
 ### 4. 部署工具
 
 #### **ONNX**
+
 - **官网**: https://onnx.ai/
 - **特点**: 模型格式标准
 - **用途**: 跨框架部署
 
 #### **TensorRT**
+
 - **官网**: https://developer.nvidia.com/tensorrt
 - **特点**: NVIDIA推理加速
 - **用途**: 生产部署
 
 #### **OpenVINO**
+
 - **官网**: https://software.intel.com/openvino-toolkit
 - **特点**: Intel硬件优化
 - **用途**: 边缘部署
@@ -458,18 +496,21 @@
 ## 🔗 重要链接汇总
 
 ### 学习社区
+
 - **Papers With Code**: https://paperswithcode.com/
 - **arXiv**: https://arxiv.org/
 - **GitHub Trending**: https://github.com/trending/python
 - **Kaggle**: https://www.kaggle.com/
 
 ### 会议期刊
+
 - **CVPR**: https://cvpr.thecvf.com/
 - **ICCV**: https://iccv2023.thecvf.com/
 - **ECCV**: https://www.eccv2024.eu/
 - **TPAMI**: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=34
 
 ### 博客教程
+
 - **Medium**: https://medium.com/topic/computer-vision
 - **Towards Data Science**: https://towardsdatascience.com/
 - **PyImageSearch**: https://www.pyimagesearch.com/
@@ -480,24 +521,28 @@
 ## 📖 学习路径建议
 
 ### 阶段一：基础入门（1-2个月）
+
 1. **理论**: 学习CS231n前3周内容
 2. **编程**: 完成NumPy + OpenCV练习
 3. **实践**: 实现MNIST分类器
 4. **阅读**: AlexNet, VGG论文
 
 ### 阶段二：核心算法（2-3个月）
+
 1. **目标检测**: YOLOv5实战
 2. **图像分割**: U-Net医学图像
 3. **阅读**: ResNet, FCN, U-Net论文
 4. **项目**: 完成1-2个完整项目
 
 ### 阶段三：进阶提升（2-3个月）
+
 1. **架构**: 理解EfficientNet, ViT
 2. **优化**: 模型压缩、部署
 3. **阅读**: 最新顶会论文
 4. **竞赛**: 参加Kaggle比赛
 
 ### 阶段四：专家水平（持续）
+
 1. **研究**: 复现SOTA算法
 2. **创新**: 提出改进方案
 3. **分享**: 写博客、开源代码

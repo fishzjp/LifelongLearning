@@ -12,6 +12,7 @@
 **残差学习**: 学习残差 $F(x) = H(x) - x$，而非直接学习 $H(x)$
 
 ### 关键突破
+
 - **解决退化**: 152层比18层性能更好
 - **梯度流动**: 可以训练1000+层网络
 - **灵活设计**: 任意深度，易于优化
@@ -279,6 +280,7 @@ class ResNet(nn.Module):
 
 
 # 常用ResNet变体
+
 def ResNet18(num_classes=1000):
     return ResNet(BasicBlock, [2, 2, 2, 2], num_classes)
 
@@ -296,6 +298,7 @@ def ResNet152(num_classes=1000):
 
 
 # 残差连接作用分析
+
 def analyze_residual_connection():
     """可视化残差连接对梯度的影响"""
     import matplotlib.pyplot as plt
@@ -333,6 +336,7 @@ def analyze_residual_connection():
 
 
 # 测试
+
 if __name__ == "__main__":
     # ResNet50测试
     model = ResNet50()
@@ -382,6 +386,7 @@ if __name__ == "__main__":
 | ResNet152 | 152 | 60.2M | 11.5G | 78.3% | 超深度 |
 
 ### 参数效率对比
+
 ```
 ResNet18:  11.7M参数 → 70.8%准确率
 ResNet50:  25.6M参数 → 76.2%准确率
@@ -405,6 +410,7 @@ ResNet152: 60.2M参数 → 78.3%准确率
 ## 🎯 适用场景
 
 ### ✅ 强烈推荐
+
 - **通用图像分类** (首选)
 - **迁移学习基础模型**
 - **目标检测骨干网络** (Faster R-CNN, Mask R-CNN)
@@ -412,16 +418,20 @@ ResNet152: 60.2M参数 → 78.3%准确率
 - **特征提取**
 
 ### 实际应用
-```python
+
+```bash
 # 1. 图像分类
+
 model = ResNet50(num_classes=10)
 
 # 2. 目标检测 (Faster R-CNN)
+
 backbone = ResNet50()
 rpn = RegionProposalNetwork()
 roi_head = ROIClassifier()
 
 # 3. 图像分割 (U-Net编码器)
+
 encoder = ResNet50()
 decoder = UNetDecoder()
 ```
@@ -480,17 +490,21 @@ $$\frac{\partial Loss}{\partial x} = \frac{\partial Loss}{\partial F(x)} \cdot \
 
 ### 1. 选择合适的变体
 
-```python
+```bash
 # 快速原型
+
 model = ResNet18(num_classes=10)  # 11.7M参数
 
 # 工业标准
+
 model = ResNet50(num_classes=10)  # 25.6M参数
 
 # 高精度
+
 model = ResNet152(num_classes=10) # 60.2M参数
 
 # 移动端
+
 model = ResNet18()  # 或考虑MobileNet
 ```
 
@@ -500,24 +514,29 @@ model = ResNet18()  # 或考虑MobileNet
 import torchvision.models as models
 
 # 1. 加载预训练
+
 model = models.resnet50(pretrained=True)
 
 # 2. 修改分类头
+
 num_features = model.fc.in_features
 model.fc = nn.Linear(num_features, num_classes)
 
 # 3. 冻结策略（小数据集）
+
 for param in model.parameters():
     param.requires_grad = False
 model.fc.requires_grad = True
 
 # 4. 分层微调（大数据集）
+
 for param in model.layer4.parameters():
     param.requires_grad = True
 for param in model.fc.parameters():
     param.requires_grad = True
 
 # 5. 优化器
+
 optimizer = torch.optim.Adam([
     {'params': model.fc.parameters(), 'lr': 0.001},
     {'params': model.layer4.parameters(), 'lr': 0.0001},
@@ -527,19 +546,23 @@ optimizer = torch.optim.Adam([
 
 ### 3. 训练技巧
 
-```python
+```bash
 # 1. 学习率调度
+
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
     optimizer, T_max=100
 )
 
 # 2. 梯度裁剪（防止爆炸）
+
 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
 # 3. 标签平滑（防止过拟合）
+
 criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
 
 # 4. Mixup数据增强
+
 def mixup_data(x, y, alpha=0.2):
     lam = torch.distributions.Beta(alpha, alpha).sample()
     index = torch.randperm(x.size(0))
@@ -553,6 +576,7 @@ def mixup_data(x, y, alpha=0.2):
 ## 📊 性能基准
 
 ### CIFAR-10准确率
+
 | 模型 | 准确率 | 参数量 | 训练时间 |
 |------|--------|--------|----------|
 | ResNet18 | 88% | 11.7M | 中等 |
@@ -562,6 +586,7 @@ def mixup_data(x, y, alpha=0.2):
 | ResNet152 | 91.5% | 60.2M | 很长 |
 
 ### 推理速度 (GPU, batch=32)
+
 | 模型 | 速度 (ms) | 吞吐量 (img/s) |
 |------|-----------|----------------|
 | ResNet18 | 2 | 16000 |
@@ -575,11 +600,13 @@ def mixup_data(x, y, alpha=0.2):
 ## 🔧 常见问题
 
 ### 1. 维度不匹配
+
 **问题**: `x + F(x)` 时维度不同
 
 **解决方案**:
-```python
+```bash
 # 在shortcut中使用1×1卷积调整
+
 self.shortcut = nn.Sequential()
 if stride != 1 or in_channels != out_channels * block.expansion:
     self.shortcut = nn.Sequential(
@@ -590,17 +617,20 @@ if stride != 1 or in_channels != out_channels * block.expansion:
 ```
 
 ### 2. 梯度爆炸
+
 **症状**: Loss变成NaN
 
 **解决方案**:
-```python
+```bash
 # 1. 梯度裁剪
+
 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
 # 2. BatchNorm（必须有）
 # 确保所有卷积层后都有BN
 
 # 3. 学习率warmup
+
 def warmup_lr(epoch):
     if epoch < 5:
         return 0.01 * (epoch + 1) / 5
@@ -613,6 +643,7 @@ def warmup_lr(epoch):
 ## 🎓 学习要点
 
 ### 必须理解
+
 - [x] 网络退化问题
 - [x] 残差学习的数学原理
 - [x] 梯度传播分析
@@ -620,6 +651,7 @@ def warmup_lr(epoch):
 - [x] 维度匹配问题
 
 ### 推荐实践
+
 - [ ] 手写推导残差连接的梯度公式
 - [ ] 实现ResNet50并训练CIFAR-10
 - [ ] 对比有/无残差连接的效果
@@ -631,10 +663,12 @@ def warmup_lr(epoch):
 ## 🚀 现代应用
 
 ### 1. 预训练模型
+
 ```python
 import torchvision.models as models
 
 # 所有变体
+
 resnet18 = models.resnet18(pretrained=True)
 resnet34 = models.resnet34(pretrained=True)
 resnet50 = models.resnet50(pretrained=True)
@@ -643,21 +677,26 @@ resnet152 = models.resnet152(pretrained=True)
 ```
 
 ### 2. 变体扩展
+
 - **ResNeXt**: 分组卷积
 - **Wide ResNet**: 更宽的网络
 - **ResNet in ResNet**: 嵌套残差
 - **Pre-Activation**: BN在ReLU前
 
 ### 3. 实际部署
-```python
+
+```bash
 # 1. 导出ONNX
+
 torch.onnx.export(model, dummy_input, "resnet50.onnx")
 
 # 2. TensorRT加速
+
 import tensorrt as trt
 # ... 转换代码
 
 # 3. 量化
+
 model.qconfig = torch.quantization.get_default_qconfig('fbgemm')
 quantized_model = torch.quantization.prepare(model)
 ```

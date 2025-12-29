@@ -23,6 +23,7 @@
 ### 阶段一：Transformer革命（2-3天）
 
 #### 1. Vision Transformer (ViT)
+
 **核心思想**：将Transformer用于图像分类
 
 ```python
@@ -139,6 +140,7 @@ class VisionTransformer(nn.Module):
         return x
 
 # 创建不同规模的ViT
+
 def vit_base():
     return VisionTransformer(patch_size=16, embed_dim=768, depth=12, num_heads=12)
 
@@ -149,6 +151,7 @@ def vit_huge():
     return VisionTransformer(patch_size=16, embed_dim=1280, depth=32, num_heads=16)
 
 # 使用示例
+
 if __name__ == '__main__':
     model = vit_base()
     x = torch.randn(1, 3, 224, 224)
@@ -179,6 +182,7 @@ def compare_vit_cnn():
 ---
 
 #### 2. Swin Transformer
+
 **核心创新**：分层结构 + 窗口注意力
 
 ```python
@@ -402,6 +406,7 @@ class SwinTransformerStage(nn.Module):
         return x.view(B, -1, x.shape[-1])
 
 # 使用示例
+
 if __name__ == '__main__':
     model = SwinTransformer()
     x = torch.randn(1, 3, 224, 224)
@@ -412,6 +417,7 @@ if __name__ == '__main__':
 ---
 
 #### 3. DETR (DEtection TRansformer)
+
 **核心创新**：端到端目标检测，无需NMS
 
 ```python
@@ -509,6 +515,7 @@ class PositionalEncoding2D(nn.Module):
         return self.pe[:, :h, :w]
 
 # DETR损失函数
+
 class DETRLoss(nn.Module):
     """DETR损失函数"""
     def __init__(self, num_classes, cost_class=1, cost_box=5, cost_giou=2):
@@ -573,6 +580,7 @@ class DETRLoss(nn.Module):
         return torch.mean(torch.abs(boxes1 - boxes2))
 
 # 使用示例
+
 if __name__ == '__main__':
     model = DETR(num_classes=20, num_queries=100)
     x = torch.randn(1, 3, 800, 800)
@@ -585,6 +593,7 @@ if __name__ == '__main__':
 ### 阶段二：自监督学习（2-3天）
 
 #### 4. 对比学习 (SimCLR)
+
 ```python
 class SimCLR(nn.Module):
     """SimCLR: 简单对比学习框架"""
@@ -638,6 +647,7 @@ class NTXentLoss(nn.Module):
         return loss
 
 # 数据增强（SimCLR需要强增强）
+
 class SimCLRAugmentation:
     def __init__(self, image_size=224):
         self.transform = A.Compose([
@@ -686,6 +696,7 @@ def train_simclr(model, dataloader, optimizer, epochs=100):
         print(f"Epoch {epoch+1}: Loss = {total_loss / len(dataloader):.4f}")
 
 # 使用示例
+
 if __name__ == '__main__':
     # 创建编码器
     encoder = VisionTransformer(num_classes=1000)
@@ -703,6 +714,7 @@ if __name__ == '__main__':
 ---
 
 #### 5. 掩码图像建模 (MAE)
+
 ```python
 class MAE(nn.Module):
     """Masked Autoencoder"""
@@ -817,6 +829,7 @@ def train_mae(model, dataloader, optimizer, epochs=100):
         print(f"Epoch {epoch+1}: Loss = {total_loss / len(dataloader):.4f}")
 
 # 使用示例
+
 if __name__ == '__main__':
     encoder = VisionTransformer(num_classes=1000)
     model = MAE(encoder)
@@ -831,6 +844,7 @@ if __name__ == '__main__':
 ### 阶段三：多模态学习（2-3天）
 
 #### 6. CLIP (Contrastive Language-Image Pre-training)
+
 ```python
 class CLIP(nn.Module):
     """CLIP模型"""
@@ -946,6 +960,7 @@ def train_clip(model, dataloader, optimizer, epochs=100):
         print(f"Epoch {epoch+1}: Loss = {total_loss / len(dataloader):.4f}")
 
 # 使用示例
+
 if __name__ == '__main__':
     image_encoder = VisionTransformer(num_classes=1000)
     text_encoder = TextEncoder(vocab_size=50000)
@@ -967,6 +982,7 @@ if __name__ == '__main__':
 ### 阶段四：模型压缩与部署（2-3天）
 
 #### 7. 知识蒸馏
+
 ```python
 class DistillationLoss(nn.Module):
     """知识蒸馏损失"""
@@ -1019,6 +1035,7 @@ def distill_model(teacher_model, student_model, dataloader, optimizer, epochs=50
         print(f"Epoch {epoch+1}: Loss = {total_loss / len(dataloader):.4f}")
 
 # 使用示例
+
 if __name__ == '__main__':
     # 教师模型（大模型）
     teacher = VisionTransformer(embed_dim=1024, depth=24, num_heads=16)
@@ -1035,6 +1052,7 @@ if __name__ == '__main__':
 ---
 
 #### 8. 模型量化
+
 ```python
 class QuantizedConv2d(nn.Module):
     """量化卷积层"""
@@ -1108,6 +1126,7 @@ def quantize_model(model, dataloader):
     return scales, zero_points
 
 # 使用示例
+
 if __name__ == '__main__':
     model = VisionTransformer()
     model.load_state_dict(torch.load('model.pth'))
@@ -1128,6 +1147,7 @@ if __name__ == '__main__':
 ### 阶段五：生成模型（2-3天）
 
 #### 9. Diffusion Models
+
 ```python
 class DiffusionModel(nn.Module):
     """扩散模型"""
@@ -1294,6 +1314,7 @@ def train_diffusion(model, dataloader, optimizer, epochs=100):
         print(f"Epoch {epoch+1}: Loss = {total_loss / len(dataloader):.4f}")
 
 # 使用示例
+
 if __name__ == '__main__':
     model = DiffusionModel()
     optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4)
@@ -1311,6 +1332,7 @@ if __name__ == '__main__':
 ### 阶段六：3D视觉进阶（2-3天）
 
 #### 10. NeRF (Neural Radiance Fields)
+
 ```python
 class NeRF(nn.Module):
     """NeRF模型"""
@@ -1443,6 +1465,7 @@ class NeRFTrainer:
         return loss.item()
 
 # 使用示例
+
 if __name__ == '__main__':
     model = NeRF()
     trainer = NeRFTrainer(model)
@@ -1459,6 +1482,7 @@ if __name__ == '__main__':
 ### 阶段七：具身智能（2-3天）
 
 #### 11. 视觉导航
+
 ```python
 class VisualNavigation(nn.Module):
     """视觉导航网络"""
@@ -1576,6 +1600,7 @@ class NavigationAgent:
             self.optimizer.step()
 
 # 使用示例
+
 if __name__ == '__main__':
     model = VisualNavigation()
     agent = NavigationAgent(model)
@@ -1599,6 +1624,7 @@ if __name__ == '__main__':
 ## 🎯 实践项目
 
 ### 项目1：ViT图像分类器
+
 ```python
 """
 目标：使用ViT在CIFAR-10上达到85%+准确率
@@ -1611,6 +1637,7 @@ if __name__ == '__main__':
 ```
 
 ### 项目2：自监督预训练
+
 ```python
 """
 目标：使用SimCLR在无标签数据上预训练，然后在有标签数据上微调
@@ -1622,6 +1649,7 @@ if __name__ == '__main__':
 ```
 
 ### 项目3：CLIP零样本分类
+
 ```python
 """
 目标：使用CLIP实现零样本图像分类
@@ -1634,6 +1662,7 @@ if __name__ == '__main__':
 ```
 
 ### 项目4：模型压缩实战
+
 ```python
 """
 目标：将ResNet50压缩到1/4大小，精度损失<2%
@@ -1663,8 +1692,10 @@ if __name__ == '__main__':
 ## 🔍 调试技巧
 
 ### 1. 训练不稳定
-```python
+
+```bash
 # 检查梯度
+
 def check_gradients(model):
     for name, param in model.named_parameters():
         if param.grad is not None:
@@ -1676,8 +1707,10 @@ def check_gradients(model):
 ```
 
 ### 2. 内存优化
-```python
+
+```bash
 # 梯度累积
+
 def train_with_accumulation(model, dataloader, optimizer, accumulation_steps=4):
     optimizer.zero_grad()
     
@@ -1692,8 +1725,10 @@ def train_with_accumulation(model, dataloader, optimizer, accumulation_steps=4):
 ```
 
 ### 3. 性能分析
-```python
+
+```bash
 # 使用torch.profiler
+
 from torch.profiler import profile, record_function
 
 with profile() as prof:
@@ -1708,6 +1743,7 @@ prof.export_chrome_trace("trace.json")  # 在chrome://tracing查看
 ## 📚 学习检查清单
 
 ### Transformer
+
 - [ ] 理解自注意力机制
 - [ ] 掌握位置编码
 - [ ] 实现ViT
@@ -1715,6 +1751,7 @@ prof.export_chrome_trace("trace.json")  # 在chrome://tracing查看
 - [ ] 掌握DETR的匹配机制
 
 ### 自监督
+
 - [ ] 理解对比学习
 - [ ] 实现SimCLR
 - [ ] 理解掩码建模
@@ -1722,30 +1759,35 @@ prof.export_chrome_trace("trace.json")  # 在chrome://tracing查看
 - [ ] 掌握预训练-微调流程
 
 ### 多模态
+
 - [ ] 理解CLIP原理
 - [ ] 掌握图文对齐
 - [ ] 实现零样本推理
 - [ ] 了解BLIP等扩展
 
 ### 模型压缩
+
 - [ ] 理解知识蒸馏
 - [ ] 掌握量化方法
 - [ ] 了解剪枝技术
 - [ ] 实现部署流程
 
 ### 生成模型
+
 - [ ] 理解扩散过程
 - [ ] 掌握采样算法
 - [ ] 了解GAN原理
 - [ ] 实现简单生成器
 
 ### 3D视觉
+
 - [ ] 理解NeRF原理
 - [ ] 掌握体积渲染
 - [ ] 了解点云处理
 - [ ] 实现3D重建
 
 ### 具身智能
+
 - [ ] 理解强化学习
 - [ ] 掌握策略梯度
 - [ ] 了解视觉导航
@@ -1756,12 +1798,14 @@ prof.export_chrome_trace("trace.json")  # 在chrome://tracing查看
 ## 🚀 下一步学习
 
 ### 研究方向
+
 1. **通用人工智能**：多任务学习、元学习
 2. **具身智能**：机器人控制、视觉-语言-动作
 3. **AIGC**：文生图、文生视频
 4. **边缘智能**：轻量化、实时推理
 
 ### 工程方向
+
 1. **大规模训练**：分布式训练、混合精度
 2. **模型部署**：TensorRT、ONNX Runtime
 3. **MLOps**：实验跟踪、模型版本管理
@@ -1772,6 +1816,7 @@ prof.export_chrome_trace("trace.json")  # 在chrome://tracing查看
 ## 📖 扩展资源
 
 ### 论文
+
 1. **ViT**: "An Image is Worth 16x16 Words" (2020)
 2. **Swin**: "Swin Transformer" (2021)
 3. **DETR**: "End-to-End Object Detection with Transformers" (2020)
@@ -1782,6 +1827,7 @@ prof.export_chrome_trace("trace.json")  # 在chrome://tracing查看
 8. **NeRF**: "NeRF: Representing Scenes as Neural Radiance Fields" (2020)
 
 ### 开源项目
+
 - **timm**: https://github.com/rwightman/pytorch-image-models
 - **open_clip**: https://github.com/mlfoundations/open_clip
 - **diffusers**: https://github.com/huggingface/diffusers

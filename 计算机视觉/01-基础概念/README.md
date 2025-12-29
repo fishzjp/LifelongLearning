@@ -1,5 +1,10 @@
 # 01-基础概念
 
+> **一句话总结**：01-基础概念文档概述
+
+---
+
+
 > 计算机视觉学习的第一步：掌握必要的数学、编程和图像基础知识。
 
 ## 📚 本章内容
@@ -7,6 +12,7 @@
 本章包含3个核心模块，为后续学习打下坚实基础。**特别说明**：本章内容经过深度优化，每个概念都有详细的文字解释、原理说明和可视化，适合零基础学习。
 
 ### 1. [数学基础](01-数学基础.md)
+
 **从零开始讲解计算机视觉必需的数学知识**
 
 **包含内容**：
@@ -24,6 +30,7 @@
 - ✅ 练习题有详细指导
 
 ### 2. [Python编程基础](02-Python编程基础.md)
+
 **手把手教你写计算机视觉代码**
 
 **包含内容**：
@@ -42,6 +49,7 @@
 - ✅ 练习题贴近实际应用
 
 ### 3. [图像基础概念](03-图像基础概念.md)
+
 **彻底理解"图像是什么"**
 
 **包含内容**：
@@ -64,12 +72,14 @@
 ## 🎯 学习路径建议
 
 ### 第一阶段：数学基础（1-2天）
+
 1. 复习线性代数核心概念
 2. 理解梯度和链式法则
 3. 掌握基本的概率统计知识
 4. 完成练习题
 
 ### 第二阶段：编程基础（2-3天）
+
 1. 熟悉NumPy数组操作
 2. 掌握Pandas数据处理
 3. 学习Matplotlib绘图
@@ -77,6 +87,7 @@
 5. 完成编程练习
 
 ### 第三阶段：图像概念（2-3天）
+
 1. 理解像素和分辨率
 2. 掌握色彩空间转换
 3. 熟悉图像格式特点
@@ -91,28 +102,21 @@
 
 ```bash
 # 基础科学计算
+
 pip install numpy pandas
 
 # 数据可视化
+
 pip install matplotlib seaborn
 
 # 图像处理
+
 pip install opencv-python pillow
 
 # 可选：科学计算扩展
+
 pip install scipy scikit-learn
-```
-
-### 验证安装
-```python
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import cv2
-
-print(f"NumPy: {np.__version__}")
-print(f"Pandas: {pd.__version__}")
-print(f"OpenCV: {cv2.__version__}")
+```markdown
 ```
 
 ---
@@ -120,16 +124,19 @@ print(f"OpenCV: {cv2.__version__}")
 ## 📝 学习建议
 
 ### 理论学习
+
 - **不要跳过数学**：虽然枯燥，但很重要
 - **理解而非记忆**：理解原理才能灵活应用
 - **多做笔记**：记录关键概念和公式
 
 ### 编程实践
+
 - **动手写代码**：不要只看不练
 - **从简单开始**：先实现基础功能，再优化
 - **调试技巧**：学会使用print和断点调试
 
 ### 图像处理
+
 - **可视化**：多画图理解处理效果
 - **参数实验**：尝试不同参数观察变化
 - **实际应用**：用真实图像练习
@@ -141,17 +148,20 @@ print(f"OpenCV: {cv2.__version__}")
 完成本章后，你应该能够：
 
 ### 数学基础
+
 - ✅ 解释图像矩阵运算的含义
 - ✅ 计算简单函数的梯度
 - ✅ 理解贝叶斯定理在分类中的应用
 
 ### 编程基础
+
 - ✅ 熟练使用NumPy创建和操作数组
 - ✅ 用Pandas处理实验数据
 - ✅ 使用Matplotlib绘制专业图表
 - ✅ 读取、显示和保存图像
 
 ### 图像概念
+
 - ✅ 解释不同色彩空间的区别
 - ✅ 选择合适的图像格式
 - ✅ 实现基本的几何变换
@@ -162,16 +172,19 @@ print(f"OpenCV: {cv2.__version__}")
 ## 🔗 相关资源
 
 ### 在线教程
+
 - [NumPy官方教程](https://numpy.org/doc/stable/user/quickstart.html)
 - [Pandas教程](https://pandas.pydata.org/docs/getting_started/tutorials.html)
 - [OpenCV教程](https://docs.opencv.org/master/d6/d00/tutorial_py_root.html)
 
 ### 参考书籍
+
 - 《Python科学计算》
 - 《数字图像处理》
 - 《深度学习入门》
 
 ### 练习平台
+
 - LeetCode (Python部分)
 - Kaggle Learn
 - HackerRank
@@ -199,3 +212,4 @@ print(f"OpenCV: {cv2.__version__}")
 **祝你学习顺利！** 🎉
 
 *最后更新：2025年12月*
+

@@ -5,21 +5,25 @@
 ## 📚 练习题分类
 
 ### 🎯 基础练习（概念理解）
+
 - 数学基础练习
 - Python编程练习
 - 图像基础操作练习
 
 ### 💻 编程练习（代码实现）
+
 - 算法实现练习
 - 框架使用练习
 - 性能优化练习
 
 ### 🚀 项目练习（综合应用）
+
 - 小型项目实战
 - 算法复现
 - 竞赛题目
 
 ### 🔥 挑战题（算法改进）
+
 - 论文复现
 - 算法创新
 - 性能优化
@@ -31,6 +35,7 @@
 ### 1. 数学基础练习
 
 #### 练习1.1：矩阵运算
+
 ```python
 """
 题目：使用NumPy实现图像的矩阵运算
@@ -50,6 +55,7 @@
 """
 
 # 你的代码
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -89,9 +95,11 @@ def matrix_operations():
 
 # 运行测试
 # matrix_operations()
+
 ```
 
 #### 练习1.2：梯度计算
+
 ```python
 """
 题目：手动计算图像梯度
@@ -112,6 +120,7 @@ def matrix_operations():
 """
 
 # 你的代码
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -140,6 +149,7 @@ def manual_sobel(image):
 # 测试
 # img = np.random.rand(100, 100)
 # gx, gy, mag, dir = manual_sobel(img)
+
 ```
 
 ---
@@ -147,6 +157,7 @@ def manual_sobel(image):
 ### 2. Python编程练习
 
 #### 练习2.1：NumPy高效操作
+
 ```python
 """
 题目：NumPy vs Python性能对比
@@ -166,6 +177,7 @@ def manual_sobel(image):
 """
 
 # 你的代码
+
 import numpy as np
 import time
 
@@ -196,9 +208,11 @@ def performance_comparison():
 
 # 运行测试
 # performance_comparison()
+
 ```
 
 #### 练习2.2：OpenCV基础操作
+
 ```python
 """
 题目：OpenCV图像处理流水线
@@ -219,6 +233,7 @@ def performance_comparison():
 """
 
 # 你的代码
+
 import cv2
 import numpy as np
 
@@ -247,6 +262,7 @@ def opencv_pipeline(image_path, output_path):
 
 # 测试
 # result = opencv_pipeline('input.jpg', 'edges.jpg')
+
 ```
 
 ---
@@ -254,6 +270,7 @@ def opencv_pipeline(image_path, output_path):
 ### 3. 图像基础练习
 
 #### 练习3.1：色彩空间转换
+
 ```python
 """
 题目：多色彩空间转换与可视化
@@ -274,6 +291,7 @@ def opencv_pipeline(image_path, output_path):
 """
 
 # 你的代码
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -324,6 +342,7 @@ def color_space_conversion(image_path):
 
 # 测试
 # color_space_conversion('test.jpg')
+
 ```
 
 ---
@@ -333,6 +352,7 @@ def color_space_conversion(image_path):
 ### 4. 算法实现练习
 
 #### 练习4.1：实现高斯滤波
+
 ```python
 """
 题目：手动实现高斯滤波器
@@ -352,6 +372,7 @@ def color_space_conversion(image_path):
 """
 
 # 你的代码
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -421,9 +442,11 @@ def gaussian_filter_demo(image_path):
 
 # 测试
 # gaussian_filter_demo('test.jpg')
+
 ```
 
 #### 练习4.2：实现边缘检测
+
 ```python
 """
 题目：实现Canny边缘检测器
@@ -443,6 +466,7 @@ def gaussian_filter_demo(image_path):
 """
 
 # 你的代码
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -502,6 +526,7 @@ def canny_edge_detector(image, low_threshold=50, high_threshold=150):
 
 # 测试
 # edges = canny_edge_detector(img, 50, 150)
+
 ```
 
 ---
@@ -509,6 +534,7 @@ def canny_edge_detector(image, low_threshold=50, high_threshold=150):
 ### 5. 框架使用练习
 
 #### 练习5.1：PyTorch神经网络
+
 ```python
 """
 题目：用PyTorch实现MNIST分类器
@@ -529,6 +555,7 @@ def canny_edge_detector(image, low_threshold=50, high_threshold=150):
 """
 
 # 你的代码
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -634,6 +661,7 @@ def train_mnist():
 
 # 运行
 # model = train_mnist()
+
 ```
 
 ---
@@ -643,6 +671,7 @@ def train_mnist():
 ### 6. 小型项目实战
 
 #### 练习6.1：文档扫描与OCR预处理
+
 ```python
 """
 项目：智能文档扫描系统
@@ -668,6 +697,7 @@ def train_mnist():
 """
 
 # 你的代码
+
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -729,9 +759,11 @@ def document_scanner(image_path):
 
 # 测试
 # warped, enhanced, binary = document_scanner('document.jpg')
+
 ```
 
 #### 练习6.2：人脸检测与美化
+
 ```python
 """
 项目：人脸检测与美化系统
@@ -757,6 +789,7 @@ def document_scanner(image_path):
 """
 
 # 你的代码
+
 import cv2
 import numpy as np
 
@@ -860,6 +893,7 @@ class FaceBeautifier:
 # beautifier = FaceBeautifier()
 # beautifier.process_image('portrait.jpg', 'beautiful.jpg')
 # beautifier.process_video()  # 实时处理
+
 ```
 
 ---
@@ -867,6 +901,7 @@ class FaceBeautifier:
 ### 7. 算法复现练习
 
 #### 练习7.1：复现LeNet-5
+
 ```python
 """
 题目：从零实现LeNet-5
@@ -883,6 +918,7 @@ class FaceBeautifier:
 """
 
 # 你的代码
+
 import numpy as np
 
 class ManualConv2D:
@@ -996,6 +1032,7 @@ class ManualLeNet5:
         return x
 
 # 测试
+
 def test_manual_lenet():
     # 加载MNIST（简化）
     from torchvision import datasets, transforms
@@ -1032,6 +1069,7 @@ def test_manual_lenet():
 
 # 运行测试
 # test_manual_lenet()
+
 ```
 
 ---
@@ -1041,6 +1079,7 @@ def test_manual_lenet():
 ### 8. 算法改进挑战
 
 #### 挑战8.1：优化YOLO检测器
+
 ```python
 """
 挑战：改进YOLOv5检测器
@@ -1062,6 +1101,7 @@ def test_manual_lenet():
 """
 
 # 你的实现
+
 """
 思路：
 1. 数据增强：Mosaic + Mixup + AutoAugment
@@ -1072,9 +1112,11 @@ def test_manual_lenet():
 """
 
 # 代码实现...
+
 ```
 
 #### 挑战8.2：医学图像分割优化
+
 ```python
 """
 挑战：提升U-Net在医学图像上的性能
@@ -1093,6 +1135,7 @@ def test_manual_lenet():
 """
 
 # 你的实现
+
 """
 思路：
 1. 损失：Dice + BCE + 边界损失
@@ -1103,6 +1146,7 @@ def test_manual_lenet():
 """
 
 # 代码实现...
+
 ```
 
 ---
@@ -1110,24 +1154,28 @@ def test_manual_lenet():
 ## 📊 练习题完成标准
 
 ### 基础练习
+
 - ✅ 代码能正确运行
 - ✅ 理解每个步骤的原理
 - ✅ 能解释关键参数的作用
 - ✅ 完成所有任务要求
 
 ### 编程练习
+
 - ✅ 代码结构清晰
 - ✅ 有必要的注释
 - ✅ 处理边界情况
 - ✅ 与标准库结果对比
 
 ### 项目练习
+
 - ✅ 完整的解决方案
 - ✅ 代码模块化
 - ✅ 有测试和验证
 - ✅ 输出可视化结果
 
 ### 挑战题
+
 - ✅ 创新性改进
 - ✅ 实验数据支持
 - ✅ 性能提升证明
@@ -1138,12 +1186,14 @@ def test_manual_lenet():
 ## 🎯 学习建议
 
 ### 每日练习计划
+
 - **基础练习**：1-2小时，每天1-2题
 - **编程练习**：2-3小时，每天1题
 - **项目练习**：周末完成，3-4小时
 - **挑战题**：每月1-2题，深度研究
 
 ### 练习方法
+
 1. **先理解后实现**：看懂原理再写代码
 2. **从简单开始**：先用小数据集测试
 3. **逐步优化**：先实现功能，再优化性能
@@ -1151,6 +1201,7 @@ def test_manual_lenet():
 5. **总结经验**：每个练习写总结
 
 ### 评估标准
+
 - **初级**：能完成基础练习
 - **中级**：能独立完成项目
 - **高级**：能解决挑战题
@@ -1160,25 +1211,29 @@ def test_manual_lenet():
 
 ## 📝 练习记录模板
 
-```markdown
+```bash
 # 练习记录
 
 ## 基本信息
+
 - 练习名称：
 - 完成日期：
 - 用时：
 
 ## 练习内容
+
 - 任务描述：
 - 实现思路：
 - 关键代码：
 
 ## 遇到问题
+
 - 问题1：
 - 解决方案：
 - 学到经验：
 
 ## 总结
+
 - 掌握知识点：
 - 需要改进：
 - 下一步计划：

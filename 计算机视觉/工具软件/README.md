@@ -34,43 +34,50 @@
 
 ### 1. 一键环境配置脚本
 
-```bash
+```python
 #!/bin/bash
 # setup_env.sh - 计算机视觉环境一键配置
 
 echo "🚀 开始配置计算机视觉开发环境..."
 
 # 1. 创建Conda环境
+
 echo "📦 创建Conda环境..."
 conda create -n cv python=3.9 -y
 conda activate cv
 
 # 2. 安装PyTorch
+
 echo "🔥 安装PyTorch..."
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 # 3. 安装计算机视觉库
+
 echo "📷 安装CV库..."
 pip install opencv-python pillow matplotlib seaborn
 pip install scikit-learn scikit-image
 pip install pandas numpy scipy
 
 # 4. 安装深度学习工具
+
 echo "🧠 安装DL工具..."
 pip install tensorboard wandb tqdm
 pip install albumentations timm
 
 # 5. 安装检测和分割库
+
 echo "🎯 安装检测分割库..."
 pip install ultralytics  # YOLOv8
 pip install segmentation-models-pytorch
 
 # 6. 安装部署工具
+
 echo "🚀 安装部署工具..."
 pip install onnx onnxruntime
 pip install tensorrt  # 需要单独安装TensorRT
 
 # 7. 验证安装
+
 echo "✅ 验证安装..."
 python -c "import torch; print(f'PyTorch版本: {torch.__version__}')"
 python -c "import cv2; print(f'OpenCV版本: {cv2.__version__}')"
@@ -81,7 +88,7 @@ echo "激活环境: conda activate cv"
 ```
 
 **使用方法**：
-```bash
+```python
 chmod +x setup_env.sh
 ./setup_env.sh
 ```
@@ -90,8 +97,9 @@ chmod +x setup_env.sh
 
 ### 2. Conda环境配置文件
 
-```yaml
+```bash
 # conda_env.yml
+
 name: cv
 channels:
   - pytorch
@@ -125,7 +133,7 @@ dependencies:
 ```
 
 **使用方法**：
-```bash
+```python
 conda env create -f conda_env.yml
 conda activate cv
 ```
@@ -134,38 +142,45 @@ conda activate cv
 
 ### 3. 依赖包列表
 
-```txt
+```bash
 # requirements.txt
 # 基础科学计算
+
 numpy>=1.21.0
 pandas>=1.3.0
 scipy>=1.7.0
 
 # 图像处理
+
 opencv-python>=4.5.0
 Pillow>=8.3.0
 scikit-image>=0.18.0
 
 # 深度学习
+
 torch>=1.9.0
 torchvision>=0.10.0
 timm>=0.9.0
 
 # 可视化
+
 matplotlib>=3.3.0
 seaborn>=0.11.0
 tensorboard>=2.7.0
 
 # 训练工具
+
 tqdm>=4.62.0
 wandb>=0.12.0
 albumentations>=1.0.0
 
 # 部署
+
 onnx>=1.10.0
 onnxruntime>=1.10.0
 
 # 检测分割
+
 ultralytics>=8.0.0
 segmentation-models-pytorch>=0.3.0
 ```
@@ -181,8 +196,9 @@ pip install -r requirements.txt
 
 ### 1. 训练脚本模板
 
-```python
+```bash
 # train_template.py
+
 """
 通用训练脚本模板
 支持：PyTorch训练、日志记录、模型保存、断点续训
@@ -428,7 +444,7 @@ if __name__ == '__main__':
 ```
 
 **使用方法**：
-```bash
+```python
 python train_template.py --data_dir ./data --batch_size 32 --epochs 100 --lr 1e-3
 ```
 
@@ -436,8 +452,9 @@ python train_template.py --data_dir ./data --batch_size 32 --epochs 100 --lr 1e-
 
 ### 2. 模型定义模板
 
-```python
+```bash
 # model_template.py
+
 """
 模型定义模板
 支持：自定义模型、预训练模型、模型保存与加载
@@ -616,6 +633,7 @@ def load_model(path, model=None, device='cuda'):
     return model, checkpoint
 
 # 使用示例
+
 if __name__ == '__main__':
     # 创建模型
     model = get_model('resnet50', num_classes=10)
@@ -638,8 +656,9 @@ if __name__ == '__main__':
 
 ### 3. 数据集模板
 
-```python
+```bash
 # dataset_template.py
+
 """
 数据集模板
 支持：自定义数据集、数据增强、数据可视化
@@ -850,6 +869,7 @@ def get_dataloader(dataset, batch_size=32, num_workers=4, shuffle=True):
     )
 
 # 使用示例
+
 if __name__ == '__main__':
     # 分类数据集
     train_transform = get_train_transform(224)
@@ -876,8 +896,9 @@ if __name__ == '__main__':
 
 ### 1. 数据处理工具
 
-```python
+```bash
 # data_utils.py
+
 """
 数据处理实用工具
 """
@@ -1048,6 +1069,7 @@ class AnnotationConverter:
         pass
 
 # 使用示例
+
 if __name__ == '__main__':
     # 划分数据集
     DataProcessor.split_dataset('./data/raw', train_ratio=0.7, val_ratio=0.15)
@@ -1064,8 +1086,9 @@ if __name__ == '__main__':
 
 ### 2. 模型工具
 
-```python
+```bash
 # model_utils.py
+
 """
 模型实用工具
 """
@@ -1224,6 +1247,7 @@ class ModelEnsemble:
             raise ValueError(f"不支持的方法: {method}")
 
 # 使用示例
+
 if __name__ == '__main__':
     # 创建示例模型
     model = nn.Sequential(
@@ -1247,8 +1271,9 @@ if __name__ == '__main__':
 
 ### 3. 可视化工具
 
-```python
+```bash
 # vis_utils.py
+
 """
 可视化工具
 """
@@ -1484,6 +1509,7 @@ class MetricsVisualizer:
         plt.show()
 
 # 使用示例
+
 if __name__ == '__main__':
     # 示例数据
     images = torch.randn(8, 3, 224, 224)
@@ -1507,8 +1533,9 @@ if __name__ == '__main__':
 
 ### 1. 性能分析器
 
-```python
+```bash
 # profiler.py
+
 """
 性能分析器
 """
@@ -1719,6 +1746,7 @@ class ModelProfiler:
         return results
 
 # 使用示例
+
 if __name__ == '__main__':
     # 创建示例模型
     model = nn.Sequential(
@@ -1744,13 +1772,14 @@ if __name__ == '__main__':
 
 ### 1. 训练自动化
 
-```bash
+```python
 #!/bin/bash
 # train.sh - 自动化训练脚本
 
 set -e  # 遇到错误立即退出
 
 # 配置
+
 PROJECT_NAME="cv_project"
 DATA_DIR="./data"
 MODEL_NAME="resnet50"
@@ -1760,6 +1789,7 @@ LR=1e-3
 DEVICE="cuda"
 
 # 创建目录
+
 mkdir -p checkpoints logs
 
 echo "🚀 开始训练: $PROJECT_NAME"
@@ -1771,6 +1801,7 @@ echo "设备: $DEVICE"
 # conda activate cv
 
 # 运行训练
+
 python train_template.py \
     --data_dir $DATA_DIR \
     --model_name $MODEL_NAME \
@@ -1782,19 +1813,21 @@ python train_template.py \
     --log_dir ./logs
 
 # 训练完成通知
+
 echo "✅ 训练完成！"
 echo "检查点: ./checkpoints"
 echo "日志: ./logs"
 
 # 可选：发送通知
 # notify-send "训练完成" "项目: $PROJECT_NAME"
+
 ```
 
 ---
 
 ### 2. 评估自动化
 
-```bash
+```python
 #!/bin/bash
 # evaluate.sh - 自动化评估脚本
 
@@ -1826,7 +1859,7 @@ echo "结果: ./results"
 
 ### 3. 部署脚本
 
-```bash
+```python
 #!/bin/bash
 # deploy.sh - 模型部署脚本
 
@@ -1840,18 +1873,21 @@ echo "输出: $OUTPUT_DIR"
 mkdir -p $OUTPUT_DIR
 
 # 1. 导出ONNX
+
 echo "步骤1: 导出ONNX"
 python export_onnx.py \
     --model_path $MODEL_PATH \
     --output $OUTPUT_DIR/model.onnx
 
 # 2. 导出TensorRT
+
 echo "步骤2: 导出TensorRT"
 trtexec --onnx=$OUTPUT_DIR/model.onnx \
         --saveEngine=$OUTPUT_DIR/model.trt \
         --fp16
 
 # 3. 测试推理
+
 echo "步骤3: 测试推理"
 python test_inference.py \
     --model $OUTPUT_DIR/model.trt \
@@ -1870,27 +1906,27 @@ echo "  - TensorRT: $OUTPUT_DIR/model.trt"
 ### 快速开始
 
 1. **环境配置**：
-   ```bash
+```python
    chmod +x setup_env.sh
    ./setup_env.sh
-   ```
+```
 
 2. **训练模型**：
-   ```bash
+```python
    python train_template.py --data_dir ./data --model_name resnet50 --epochs 100
-   ```
+```
 
 3. **分析性能**：
-   ```python
+```python
    from model_utils import ModelAnalyzer
    ModelAnalyzer.model_info(model)
-   ```
+```
 
 4. **可视化结果**：
-   ```python
+```python
    from vis_utils import ImageVisualizer
    ImageVisualizer.show_batch(images)
-   ```
+```
 
 ### 最佳实践
 
