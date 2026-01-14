@@ -2,6 +2,41 @@
 
 > 系统学习图像分割的核心技术，从语义分割到实例分割，掌握FCN、U-Net、DeepLab、Mask R-CNN等经典算法，理解Dice系数、IoU等评估指标。
 
+## 📋 章节元信息
+
+**难度等级**: ⭐⭐⭐⭐ (进阶级)
+**预计学习时间**: 10-14天 (每天2-3小时)
+**前置知识**:
+- 熟悉CNN基础（卷积、池化、激活函数）
+- 掌握PyTorch深度学习框架
+- 理解图像分类任务
+- 了解基本的损失函数和优化器
+
+**学习目标**:
+
+**理论掌握**:
+- 深入理解语义分割、实例分割、全景分割的区别
+- 掌握FCN、U-Net、DeepLab等架构的设计思想
+- 理解跳跃连接、空洞卷积等关键技术
+- 掌握Dice Loss、Focal Loss等损失函数原理
+- 理解IoU、mIoU、Dice系数等评估指标
+
+**实践能力**:
+- 能够从零实现U-Net、DeepLab等分割网络
+- 会处理医学图像、遥感图像等专业数据
+- 掌握分割任务的数据增强技巧
+- 能够调试和优化分割模型的性能
+- 会使用专业工具库（segmentation_models, MMSegmentation）
+
+**应用场景**:
+- 医学影像分析（肿瘤分割、器官分割）
+- 自动驾驶（道路、车辆、行人分割）
+- 遥感图像分析（建筑物、农田分割）
+- 工业检测（缺陷检测、产品分割）
+- 视频会议背景分割
+
+![U-Net编码器-解码器架构图](./images/Gemini_Generated_Image_c3iy6gc3iy6gc3iy.png "U-Net编码器-解码器架构图")
+
 ## 📚 章节概览
 
 图像分割是计算机视觉的核心任务之一，旨在为图像中的每个像素分配类别标签。
@@ -14,31 +49,163 @@
 4. **评估指标**：Dice系数、IoU、mIoU
 5. **实战项目**：医学图像分割、遥感图像分割
 
+### U-Net架构流程
+
+```mermaid
+flowchart TB
+    Input[输入图像] --> Enc1[编码器1]
+    Enc1 --> Enc2[编码器2]
+    Enc2 --> Enc3[编码器3]
+    Enc3 --> Enc4[编码器4]
+    Enc4 --> Bottleneck[瓶颈层]
+    Bottleneck --> Dec4[解码器4]
+    Dec4 --> Dec3[解码器3]
+    Dec3 --> Dec2[解码器2]
+    Dec2 --> Dec1[解码器1]
+    Dec1 --> Output[分割输出]
+
+    Enc4 -.跳跃连接.-> Dec4
+    Enc3 -.跳跃连接.-> Dec3
+    Enc2 -.跳跃连接.-> Dec2
+    Enc1 -.跳跃连接.-> Dec1
+```
+
+### 图像分割方法对比
+
+```mermaid
+graph TB
+    subgraph语义分割[语义分割]
+        A1[像素分类]
+        A2[不区分别例]
+    end
+
+    subgraph实例分割[实例分割]
+        B1[目标检测]
+        B2[像素分割]
+        B3[区分别例]
+    end
+
+    subgraph全景分割[全景分割]
+        C1[语义+实例]
+        C2[背景处理]
+    end
+```
+
 ---
 
 ## 🎯 学习路径
 
 ### 阶段一：基础概念（1天）
 
-#### 1. 图像分割任务定义
+#### 1. 图像分割任务类型详解
+
+图像分割为图像中的每个像素分配标签，根据分割粒度分为三大类：
+
+##### 1.1 语义分割 (Semantic Segmentation)
+
+**定义**: 将图像中所有相同类别的像素标记为同一标签，不区分别例。
+
+**输出**: 每个像素的类别标签 (H, W)
+
+**特点**:
+- 相同类别的所有对象使用同一颜色
+- 无法区分同一类别的不同实例
+- 输出是单通道标签图
+
+**应用**: 场景解析、道路分割、医学影像器官分割
+
+**示例**:
+```
+输入: 3个人站在一起
+输出: 所有人像素都标记为"人"类 (同一颜色)
+```
+
+---
+
+##### 1.2 实例分割 (Instance Segmentation)
+
+**定义**: 在语义分割基础上，进一步区分类别相同的不同实例。
+
+**输出**: 每个实例的掩码 + 类别标签
+
+**特点**:
+- 同类别的不同对象用不同颜色标识
+- 结合了目标检测和语义分割
+- 输出是多个掩码（每个实例一个）
+
+**应用**: 目标计数、拥挤场景分析、商品检测
+
+**示例**:
+```
+输入: 3个人站在一起
+输出: 人1掩码、人2掩码、人3掩码 (三个独立掩码)
+```
+
+---
+
+##### 1.3 全景分割 (Panoptic Segmentation)
+
+**定义**: 语义分割和实例分割的统一框架，处理所有stuff（背景）和thing（物体）。
+
+**输出**: 所有像素的类别和实例ID
+
+**特点**:
+- Stuff类别（背景）：使用语义分割
+- Thing类别（物体）：使用实例分割
+- 完全覆盖所有像素，无重叠
+
+**应用**: 自动驾驶、机器人视觉、场景理解
+
+**示例**:
+```
+输入: 人站立在道路旁，有建筑物
+输出:
+  - 道路: 语义分割 (stuff)
+  - 建筑物: 语义分割 (stuff)
+  - 人: 实例分割 (thing), 实例ID不同
+```
+
+---
+
+#### 1.2 详细对比表
+
+| 对比维度 | 语义分割 | 实例分割 | 全景分割 |
+|---------|---------|---------|---------|
+| **输出格式** | (H, W) 标签图 | N个掩码 + 类别 | (H, W) 标签+实例ID |
+| **是否区分别例** | ❌ 不区分 | ✅ 区分 | ✅ 区分物体 |
+| **处理背景** | ✅ 作为类别 | ❌ 不处理 | ✅ stuff类别 |
+| **算法复杂度** | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **计算成本** | 低 | 高 | 高 |
+| **典型算法** | FCN, U-Net, DeepLab | Mask R-CNN, SOLO | Panoptic FPN |
+| **数据标注** | 像素级标签 | 实例级掩码 | 语义+实例标签 |
+| **典型应用** | 场景解析、道路分割 | 目标计数、检测 | 自动驾驶 |
+
+---
+
+#### 1.3 数据格式详解
 
 ```python
 """
-图像分割类型：
+图像分割数据格式详解
 
-1. 语义分割（Semantic Segmentation）
-   - 相同类别像素共享同一标签
-   - 输出：每个像素的类别
-   - 示例：所有"人"像素标记为同一类
+1. 语义分割数据格式
+   - 输入: (C, H, W) RGB图像
+   - 标签: (H, W) 每个像素的类别ID
+   - 示例: 0=背景, 1=人, 2=车, 3=道路
 
-2. 实例分割（Instance Segmentation）
-   - 区分同一类别的不同实例
-   - 输出：每个像素的实例ID + 类别
-   - 示例：人1、人2、人3分别标记
+2. 实例分割数据格式
+   - 输入: (C, H, W) RGB图像
+   - 标签: 字典列表
+     * masks: (N, H, W) N个实例的掩码
+     * labels: (N,) 每个实例的类别
+     * bboxes: (N, 4) 边界框 [x1, y1, x2, y2]
+     * scores: (N,) 置信度分数
 
-3. 全景分割（Panoptic Segmentation）
-   - 语义 + 实例的结合
-   - 输出：所有像素的类别和实例ID
+3. 全景分割数据格式
+   - 输入: (C, H, W) RGB图像
+   - 标签: (H, W) 编码的类别和实例ID
+     * 编码: label = category_id * 1000 + instance_id
+     * stuff类别: instance_id = 0
 """
 
 import numpy as np
@@ -960,128 +1127,1033 @@ def evaluate_model_performance(model, dataloader, num_classes):
 
 ---
 
+## 🔥 分割损失函数详解
+
+### 1. Dice Loss
+
+**动机**: 解决类别不平衡问题，医学图像中小目标（如肿瘤）占比很小，交叉熵损失会被大量背景像素主导。
+
+**原理**: 直接优化Dice系数（分割任务的核心评估指标）。
+
+**Dice系数公式**:
+```
+Dice = 2 * |X ∩ Y| / (|X| + |Y|)
+```
+
+**Dice Loss**:
+```
+Dice Loss = 1 - Dice
+```
+
+```python
+class DiceLoss(nn.Module):
+    """
+    Dice Loss: 直接优化Dice系数
+
+    优势:
+    - 直接优化评估指标
+    - 对类别不平衡鲁棒
+    - 梯度性质好
+
+    适用场景:
+    - 医学图像分割
+    - 小目标分割
+    - 高度不平衡数据
+    """
+
+    def __init__(self, smooth=1e-6, sigmoid=True):
+        """
+        Args:
+            smooth: 平滑项，避免分母为0
+            sigmoid: 是否应用sigmoid激活
+        """
+        super(DiceLoss, self).__init__()
+        self.smooth = smooth
+        self.sigmoid = sigmoid
+
+    def forward(self, pred, target):
+        """
+        Args:
+            pred: (B, 1, H, W) 未归一化的预测
+            target: (B, 1, H, W) 二值标签 [0, 1]
+
+        Returns:
+            loss: 标量
+        """
+        if self.sigmoid:
+            pred = torch.sigmoid(pred)
+
+        # 展平
+        pred_flat = pred.view(-1)
+        target_flat = target.view(-1)
+
+        # 计算交集
+        intersection = (pred_flat * target_flat).sum()
+
+        # Dice系数
+        dice = (2. * intersection + self.smooth) / (
+            pred_flat.sum() + target_flat.sum() + self.smooth
+        )
+
+        # Dice Loss
+        return 1 - dice
+
+
+class MultiClassDiceLoss(nn.Module):
+    """
+    多类别Dice Loss
+    """
+
+    def __init__(self, num_classes, smooth=1e-6):
+        super(MultiClassDiceLoss, self).__init__()
+        self.num_classes = num_classes
+        self.smooth = smooth
+
+    def forward(self, pred, target):
+        """
+        Args:
+            pred: (B, C, H, W) 预测logits
+            target: (B, H, W) 类别标签 [0, C-1]
+        """
+        # Softmax
+        pred = F.softmax(pred, dim=1)
+
+        # One-hot编码
+        target_one_hot = F.one_hot(target, num_classes=self.num_classes)  # (B, H, W, C)
+        target_one_hot = target_one_hot.permute(0, 3, 1, 2).float()  # (B, C, H, W)
+
+        # 计算每个类别的Dice
+        dice_scores = []
+        for c in range(self.num_classes):
+            pred_c = pred[:, c, :, :]
+            target_c = target_one_hot[:, c, :, :]
+
+            intersection = (pred_c * target_c).sum()
+            dice = (2. * intersection + self.smooth) / (
+                pred_c.sum() + target_c.sum() + self.smooth
+            )
+            dice_scores.append(dice)
+
+        # 平均Dice
+        mean_dice = torch.stack(dice_scores).mean()
+        return 1 - mean_dice
+
+
+# 使用示例
+dice_loss = DiceLoss()
+pred = torch.randn(4, 1, 256, 256)  # batch=4
+target = torch.randint(0, 2, (4, 1, 256, 256)).float()
+loss = dice_loss(pred, target)
+print(f"Dice Loss: {loss.item():.4f}")
+```
+
+---
+
+### 2. Focal Loss
+
+**动机**: 解决极端类别不平衡和简单样本过多导致的训练低效问题。
+
+**原理**: 降低简单样本的权重，让模型专注于困难样本。
+
+**Focal Loss公式**:
+```
+FL(p_t) = -α_t * (1 - p_t)^γ * log(p_t)
+
+其中:
+- p_t: 模型对真实类别的预测概率
+- α_t: 平衡因子 (解决类别不平衡)
+- γ: 聚焦参数 (解决难易样本不平衡)
+```
+
+**关键点**:
+- 当p_t → 1 (简单样本): (1-p_t)^γ → 0, 权重降低
+- 当p_t → 0 (困难样本): (1-p_t)^γ → 1, 权重保持
+
+```python
+class FocalLoss(nn.Module):
+    """
+    Focal Loss: 聚焦于困难样本
+
+    优势:
+    - 自动降低简单样本权重
+    - 解决类别不平衡
+    - 提升困难样本挖掘能力
+
+    适用场景:
+    - 单阶段检测器 (RetinaNet)
+    - 极度不平衡数据
+    - 困难样本挖掘
+    """
+
+    def __init__(self, alpha=0.25, gamma=2.0, reduction='mean'):
+        """
+        Args:
+            alpha: 平衡因子, 控制正负样本权重
+                  alpha=0.25表示正样本权重为0.25, 负样本为0.75
+            gamma: 聚焦参数, 控制难易样本权重
+                  gamma=0时退化为交叉熵
+                  gamma越大, 对简单样本的抑制越强
+            reduction: 'mean', 'sum', 或 'none'
+        """
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+
+    def forward(self, pred, target):
+        """
+        Args:
+            pred: (B, C, H, W) 预测logits
+            target: (B, H, W) 类别标签
+
+        Returns:
+            loss: 标量
+        """
+        # 计算BCE
+        bce = F.binary_cross_entropy_with_logits(pred, target.float(), reduction='none')
+
+        # 计算概率
+        p_t = torch.sigmoid(pred)
+        p_t = torch.where(target >= 0.5, p_t, 1 - p_t)
+
+        # Alpha权重
+        alpha_t = torch.where(target >= 0.5, self.alpha, 1 - self.alpha)
+
+        # Focal Loss
+        focal_loss = alpha_t * (1 - p_t) ** self.gamma * bce
+
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        else:
+            return focal_loss
+
+
+class FocalLossMultiClass(nn.Module):
+    """多类别Focal Loss"""
+
+    def __init__(self, alpha=None, gamma=2.0, num_classes=None):
+        """
+        Args:
+            alpha: 每个类别的权重, 形状(num_classes,)
+            gamma: 聚焦参数
+            num_classes: 类别数
+        """
+        super(FocalLossMultiClass, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+
+        if alpha is None:
+            self.alpha = torch.ones(num_classes)
+        elif isinstance(alpha, (list, np.ndarray)):
+            self.alpha = torch.tensor(alpha)
+        elif not isinstance(alpha, torch.Tensor):
+            raise ValueError(f'不支持的alpha类型: {type(alpha)}')
+
+    def forward(self, pred, target):
+        """
+        Args:
+            pred: (B, C, H, W) logits
+            target: (B, H, W) 类别标签
+        """
+        # Cross entropy
+        ce = F.cross_entropy(pred, target, reduction='none')
+
+        # 概率
+        p = F.softmax(pred, dim=1)
+
+        # 获取真实类别的概率
+        p_t = p.gather(1, target.unsqueeze(1)).squeeze(1)
+
+        # Alpha权重
+        if self.alpha.device != pred.device:
+            self.alpha = self.alpha.to(pred.device)
+        alpha_t = self.alpha[target]
+
+        # Focal Loss
+        focal_loss = alpha_t * (1 - p_t) ** self.gamma * ce
+
+        return focal_loss.mean()
+
+
+# 使用示例
+focal_loss = FocalLoss(alpha=0.25, gamma=2.0)
+pred = torch.randn(4, 1, 256, 256)
+target = torch.randint(0, 2, (4, 256, 256)).float()
+loss = focal_loss(pred, target)
+print(f"Focal Loss: {loss.item():.4f}")
+```
+
+---
+
+### 3. Combined Loss (BCE + Dice)
+
+**动机**: 结合BCE的稳定性和Dice的指标优化特性。
+
+```python
+class CombinedLoss(nn.Module):
+    """
+    组合损失: BCE + Dice
+
+    优势:
+    - BCE提供稳定的梯度
+    - Dice直接优化指标
+    - 互相补充
+    """
+
+    def __init__(self, bce_weight=0.5, dice_weight=0.5):
+        super(CombinedLoss, self).__init__()
+        self.bce_weight = bce_weight
+        self.dice_weight = dice_weight
+        self.bce = nn.BCEWithLogitsLoss()
+        self.dice = DiceLoss()
+
+    def forward(self, pred, target):
+        bce_loss = self.bce(pred, target)
+        dice_loss = self.dice(pred, target)
+        return (self.bce_weight * bce_loss +
+                self.dice_weight * dice_loss)
+
+
+# 使用示例
+combined_loss = CombinedLoss(bce_weight=0.5, dice_weight=0.5)
+pred = torch.randn(4, 1, 256, 256)
+target = torch.randint(0, 2, (4, 1, 256, 256)).float()
+loss = combined_loss(pred, target)
+print(f"Combined Loss: {loss.item():.4f}")
+```
+
+---
+
+### 4. Tversky Loss
+
+**动机**: Dice Loss的推广，可以灵活控制假阳性和假阴性的权衡。
+
+**公式**:
+```
+Tversky Index = TP / (TP + α*FP + β*FN)
+Tversky Loss = 1 - Tversky Index
+
+其中:
+- TP: True Positive
+- FP: False Positive
+- FN: False Negative
+- α + β = 1
+- α > 0.5: 更关注精确度
+- β > 0.5: 更关注召回率
+```
+
+```python
+class TverskyLoss(nn.Module):
+    """
+    Tversky Loss: Dice Loss的泛化版本
+
+    优势:
+    - 可以控制FP和FN的权衡
+    - 适合需要调节精确度/召回率的场景
+
+    参数:
+    - alpha: 控制FP权重 (0.5 = 不偏向)
+    - beta: 控制FN权重 (0.5 = 不偏向)
+      alpha > beta: 更关注精确度 (减少FP)
+      beta > alpha: 更关注召回率 (减少FN)
+    """
+
+    def __init__(self, alpha=0.3, beta=0.7, smooth=1e-6):
+        super(TverskyLoss, self).__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.smooth = smooth
+
+    def forward(self, pred, target):
+        # Sigmoid
+        pred = torch.sigmoid(pred)
+
+        # 展平
+        pred_flat = pred.view(-1)
+        target_flat = target.view(-1)
+
+        # TP, FP, FN
+        TP = (pred_flat * target_flat).sum()
+        FP = ((1 - target_flat) * pred_flat).sum()
+        FN = (target_flat * (1 - pred_flat)).sum()
+
+        # Tversky Index
+        tversky = (TP + self.smooth) / (
+            TP + self.alpha * FP + self.beta * FN + self.smooth
+        )
+
+        return 1 - tversky
+
+
+# 使用示例: 高召回率配置 (医学场景, 漏诊代价大)
+tversky_loss = TverskyLoss(alpha=0.3, beta=0.7)  # 偏向召回
+pred = torch.randn(4, 1, 256, 256)
+target = torch.randint(0, 2, (4, 1, 256, 256)).float()
+loss = tversky_loss(pred, target)
+print(f"Tversky Loss: {loss.item():.4f}")
+```
+
+---
+
+### 5. 损失函数选择指南
+
+| 场景 | 推荐损失函数 | 参数设置 | 原因 |
+|------|------------|---------|------|
+| **一般分割** | BCE + Dice | 0.5 + 0.5 | 平衡稳定性和指标 |
+| **医学小目标** | Dice | smooth=1e-6 | 直接优化指标 |
+| **极度不平衡** | Focal | α=0.25, γ=2 | 聚焦困难样本 |
+| **高召回需求** | Tversky | α=0.3, β=0.7 | 减少假阴性 |
+| **高精确需求** | Tversky | α=0.7, β=0.3 | 减少假阳性 |
+| **多类别** | MultiClassDice + CE | 均衡权重 | 处理多类别 |
+
+---
+
+### 6. 损失函数对比实验
+
+```python
+def compare_losses():
+    """对比不同损失函数的行为"""
+
+    # 模拟预测和目标
+    pred = torch.randn(8, 1, 256, 256)
+    target = torch.randint(0, 2, (8, 1, 256, 256)).float()
+
+    # 计算各种损失
+    losses = {
+        'BCE': nn.BCEWithLogitsLoss()(pred, target).item(),
+        'Dice': DiceLoss()(pred, target).item(),
+        'Focal(γ=1)': FocalLoss(alpha=0.25, gamma=1)(pred, target).item(),
+        'Focal(γ=2)': FocalLoss(alpha=0.25, gamma=2)(pred, target).item(),
+        'Focal(γ=3)': FocalLoss(alpha=0.25, gamma=3)(pred, target).item(),
+        'Tversky(0.3,0.7)': TverskyLoss(alpha=0.3, beta=0.7)(pred, target).item(),
+        'Tversky(0.5,0.5)': TverskyLoss(alpha=0.5, beta=0.5)(pred, target).item(),
+        'Combined': CombinedLoss()(pred, target).item(),
+    }
+
+    # 打印对比
+    print("损失函数对比:")
+    print("-" * 50)
+    for name, loss in losses.items():
+        print(f"{name:20s}: {loss:.4f}")
+
+compare_losses()
+```
+
+**输出示例**:
+```
+损失函数对比:
+--------------------------------------------------
+BCE                 : 0.6924
+Dice                : 0.4853
+Focal(γ=1)          : 0.5123
+Focal(γ=2)          : 0.3542
+Focal(γ=3)          : 0.2311
+Tversky(0.3,0.7)    : 0.4215
+Tversky(0.5,0.5)    : 0.4853
+Combined            : 0.5888
+```
+
+---
+
 ## 🎯 实战项目
 
-### 项目1：医学图像分割（细胞分割）
+### 项目1：医学图像分割（细胞分割）完整实战
+
+#### 项目概述
+
+**目标**: 使用U-Net分割显微镜下的细胞图像
+**数据集**: ISBI 2012 EM Segmentation Dataset 或自定义细胞数据
+**评价指标**: Dice系数, IoU, 像素准确率
+**预计训练时间**: 30-50 epochs (约2-3小时, GPU)
+
+---
+
+#### 完整代码实现
 
 ```python
 """
-目标：使用U-Net分割细胞图像
-数据集：细胞显微镜图像
+医学图像分割完整训练流程
+项目: 细胞图像分割
+模型: U-Net
 """
 
 import torch
+import torch.nn as nn
+import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 import cv2
 import numpy as np
+import os
+from tqdm import tqdm
+import matplotlib.pyplot as plt
 
-class CellDataset(Dataset):
-    """细胞分割数据集"""
-    
-    def __init__(self, image_dir, mask_dir, transform=None):
+# ============ 1. 数据集定义 ============
+
+class CellSegmentationDataset(Dataset):
+    """
+    细胞分割数据集
+
+    数据格式:
+    - images/: 原始显微镜图像 (.png, .tif)
+    - masks/: 分割标签 (.png, 灰度图)
+    """
+
+    def __init__(self, image_dir, mask_dir, transform=None, image_size=256):
+        """
+        Args:
+            image_dir: 图像目录
+            mask_dir: 标签目录
+            transform: 数据增强 (albumentations)
+            image_size: 目标图像尺寸
+        """
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.transform = transform
-        self.image_files = os.listdir(image_dir)
-    
+        self.image_size = image_size
+
+        # 获取图像列表
+        self.images = sorted([f for f in os.listdir(image_dir)
+                            if f.endswith(('.png', '.tif', '.jpg'))])
+
+        print(f"找到 {len(self.images)} 张图像")
+
     def __len__(self):
-        return len(self.image_files)
-    
+        return len(self.images)
+
     def __getitem__(self, idx):
         # 读取图像
-        img_name = self.image_files[idx]
+        img_name = self.images[idx]
         img_path = os.path.join(self.image_dir, img_name)
-        mask_path = os.path.join(self.mask_dir, img_name.replace('.png', '_mask.png'))
-        
+
+        # 读取原始图像
         image = cv2.imread(img_path)
+        if image is None:
+            raise ValueError(f"无法读取图像: {img_path}")
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
-        
-        # 归一化
-        image = image.astype(np.float32) / 255.0
-        mask = (mask > 127).astype(np.float32)
-        
+
+        # 读取标签
+        mask_name = img_name.replace('.png', '_mask.png').replace('.jpg', '_mask.png')
+        mask_path = os.path.join(self.mask_dir, mask_name)
+
+        if not os.path.exists(mask_path):
+            # 如果没有对应的mask文件, 生成空mask
+            mask = np.zeros(image.shape[:2], dtype=np.uint8)
+        else:
+            mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
+
+        # 调整尺寸
+        image = cv2.resize(image, (self.image_size, self.image_size))
+        mask = cv2.resize(mask, (self.image_size, self.image_size),
+                         interpolation=cv2.INTER_NEAREST)
+
+        # 数据增强
         if self.transform:
             augmented = self.transform(image=image, mask=mask)
             image = augmented['image']
             mask = augmented['mask']
-        
+
+        # 转换为Tensor
+        image = torch.from_numpy(image).float() / 255.0
+        image = image.permute(2, 0, 1)  # (C, H, W)
+
+        mask = torch.from_numpy(mask).float()
+        mask = mask.unsqueeze(0)  # (1, H, W)
+
         return image, mask
 
-def train_cell_segmentation():
-    """训练细胞分割模型"""
-    # 1. 数据准备
-    from albumentations import Compose, Resize, HorizontalFlip, VerticalFlip, Normalize
-    
-    train_transform = Compose([
-        Resize(256, 256),
-        HorizontalFlip(p=0.5),
-        VerticalFlip(p=0.5),
-        Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
-    
-    train_dataset = CellDataset(
-        image_dir='data/cell/train/images',
-        mask_dir='data/cell/train/masks',
-        transform=train_transform
+
+# ============ 2. U-Net模型定义 ============
+
+class DoubleConv(nn.Module):
+    """双卷积块: Conv -> BN -> ReLU -> Conv -> BN -> ReLU"""
+
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.double_conv = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+        )
+
+    def forward(self, x):
+        return self.double_conv(x)
+
+
+class UNet(nn.Module):
+    """
+    U-Net: 医学图像分割的经典网络
+
+    特点:
+    - 编码器-解码器结构
+    - 跳跃连接保留细节
+    - 适合小数据集
+    """
+
+    def __init__(self, in_channels=3, out_channels=1, features=[64, 128, 256, 512]):
+        super().__init__()
+
+        # 编码器
+        self.enc1 = DoubleConv(in_channels, features[0])
+        self.pool1 = nn.MaxPool2d(2)
+        self.enc2 = DoubleConv(features[0], features[1])
+        self.pool2 = nn.MaxPool2d(2)
+        self.enc3 = DoubleConv(features[1], features[2])
+        self.pool3 = nn.MaxPool2d(2)
+        self.enc4 = DoubleConv(features[2], features[3])
+
+        # 瓶颈层
+        self.bottleneck = DoubleConv(features[3], features[3] * 2)
+
+        # 解码器
+        self.upconv4 = nn.ConvTranspose2d(features[3] * 2, features[3], 2, 2)
+        self.dec4 = DoubleConv(features[3] * 2, features[3])
+
+        self.upconv3 = nn.ConvTranspose2d(features[3], features[2], 2, 2)
+        self.dec3 = DoubleConv(features[2] * 2, features[2])
+
+        self.upconv2 = nn.ConvTranspose2d(features[2], features[1], 2, 2)
+        self.dec2 = DoubleConv(features[1] * 2, features[1])
+
+        self.upconv1 = nn.ConvTranspose2d(features[1], features[0], 2, 2)
+        self.dec1 = DoubleConv(features[0] * 2, features[0])
+
+        # 最终卷积
+        self.final_conv = nn.Conv2d(features[0], out_channels, kernel_size=1)
+
+    def forward(self, x):
+        # 编码
+        enc1 = self.enc1(x)
+        enc2 = self.enc2(self.pool1(enc1))
+        enc3 = self.enc3(self.pool2(enc2))
+        enc4 = self.enc4(self.pool3(enc3))
+
+        # 瓶颈
+        bottleneck = self.bottleneck(self.pool3(enc4))
+
+        # 解码 + 跳跃连接
+        dec4 = self.upconv4(bottleneck)
+        dec4 = torch.cat([enc4, dec4], dim=1)
+        dec4 = self.dec4(dec4)
+
+        dec3 = self.upconv3(dec4)
+        dec3 = torch.cat([enc3, dec3], dim=1)
+        dec3 = self.dec3(dec3)
+
+        dec2 = self.upconv2(dec3)
+        dec2 = torch.cat([enc2, dec2], dim=1)
+        dec2 = self.dec2(dec2)
+
+        dec1 = self.upconv1(dec2)
+        dec1 = torch.cat([enc1, dec1], dim=1)
+        dec1 = self.dec1(dec1)
+
+        # 输出
+        return self.final_conv(dec1)
+
+
+# ============ 3. 损失函数和评估指标 ============
+
+class DiceBCELoss(nn.Module):
+    """组合损失: Dice + BCE"""
+
+    def __init__(self, dice_weight=0.5):
+        super().__init__()
+        self.dice_weight = dice_weight
+        self.bce = nn.BCEWithLogitsLoss()
+
+    def forward(self, pred, target):
+        bce_loss = self.bce(pred, target)
+
+        pred_sigmoid = torch.sigmoid(pred)
+        intersection = (pred_sigmoid * target).sum()
+        dice_loss = 1 - (2. * intersection + 1e-6) / (
+            pred_sigmoid.sum() + target.sum() + 1e-6
+        )
+
+        return self.dice_weight * dice_loss + (1 - self.dice_weight) * bce_loss
+
+
+def calculate_metrics(pred, target, threshold=0.5):
+    """
+    计算分割评估指标
+
+    Returns:
+        dict: 包含dice, iou, precision, recall
+    """
+    pred = (torch.sigmoid(pred) > threshold).float()
+
+    TP = (pred * target).sum()
+    FP = (pred * (1 - target)).sum()
+    FN = ((1 - pred) * target).sum()
+    TN = ((1 - pred) * (1 - target)).sum()
+
+    # Dice
+    dice = (2. * TP + 1e-6) / (2. * TP + FP + FN + 1e-6)
+
+    # IoU
+    iou = (TP + 1e-6) / (TP + FP + FN + 1e-6)
+
+    # Precision
+    precision = (TP + 1e-6) / (TP + FP + 1e-6)
+
+    # Recall
+    recall = (TP + 1e-6) / (TP + FN + 1e-6)
+
+    return {
+        'dice': dice.item(),
+        'iou': iou.item(),
+        'precision': precision.item(),
+        'recall': recall.item(),
+    }
+
+
+# ============ 4. 训练函数 ============
+
+def train_cell_segmentation(
+    train_img_dir='data/cell/train/images',
+    train_mask_dir='data/cell/train/masks',
+    val_img_dir='data/cell/val/images',
+    val_mask_dir='data/cell/val/masks',
+    epochs=50,
+    batch_size=8,
+    lr=1e-4,
+    image_size=256,
+    device='cuda'
+):
+    """
+    完整训练流程
+    """
+
+    print("=" * 60)
+    print("医学图像分割训练 - U-Net")
+    print("=" * 60)
+
+    # 数据增强
+    try:
+        from albumentations import Compose, HorizontalFlip, VerticalFlip, Rotate, RandomBrightnessContrast
+        train_transform = Compose([
+            HorizontalFlip(p=0.5),
+            VerticalFlip(p=0.5),
+            Rotate(limit=30, p=0.5),
+            RandomBrightnessContrast(p=0.2),
+        ])
+        val_transform = None
+    except ImportError:
+        print("未安装albumentations, 使用基础数据加载")
+        train_transform = None
+        val_transform = None
+
+    # 数据集
+    print("\n[1/6] 加载数据集...")
+    train_dataset = CellSegmentationDataset(
+        train_img_dir, train_mask_dir, transform=train_transform, image_size=image_size
     )
-    
-    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
-    
-    # 2. 模型
-    model = UNet(in_channels=3, out_channels=1, init_features=32)
-    
-    # 3. 损失函数
-    criterion = nn.BCELoss()
-    
-    # 4. 优化器
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-    
-    # 5. 训练循环
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model.to(device)
-    
-    for epoch in range(100):
+    val_dataset = CellSegmentationDataset(
+        val_img_dir, val_mask_dir, transform=val_transform, image_size=image_size
+    )
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size,
+                             shuffle=True, num_workers=2, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size,
+                           shuffle=False, num_workers=2, pin_memory=True)
+
+    print(f"训练集: {len(train_dataset)} 张图像")
+    print(f"验证集: {len(val_dataset)} 张图像")
+
+    # 模型
+    print("\n[2/6] 构建模型...")
+    model = UNet(in_channels=3, out_channels=1).to(device)
+
+    # 统计参数量
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"总参数量: {total_params/1e6:.2f}M")
+    print(f"可训练参数: {trainable_params/1e6:.2f}M")
+
+    # 损失函数和优化器
+    print("\n[3/6] 配置训练...")
+    criterion = DiceBCELoss(dice_weight=0.5)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', factor=0.5, patience=5, verbose=True
+    )
+
+    # 训练历史
+    history = {
+        'train_loss': [],
+        'val_loss': [],
+        'val_dice': [],
+        'val_iou': [],
+    }
+
+    best_dice = 0.0
+
+    # 训练循环
+    print("\n[4/6] 开始训练...")
+    print(f"Epochs: {epochs}, Batch Size: {batch_size}, LR: {lr}")
+
+    for epoch in range(epochs):
+        # ============ 训练阶段 ============
         model.train()
-        epoch_loss = 0
-        
-        for images, masks in train_loader:
-            images = images.permute(0, 3, 1, 2).to(device)
-            masks = masks.unsqueeze(1).to(device)
-            
+        epoch_loss = 0.0
+
+        pbar = tqdm(train_loader, desc=f'Epoch {epoch+1}/{epochs}')
+        for images, masks in pbar:
+            images = images.to(device)
+            masks = masks.to(device)
+
             optimizer.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, masks)
             loss.backward()
             optimizer.step()
-            
-            epoch_loss += loss.item()
-        
-        print(f'Epoch {epoch+1}, Loss: {epoch_loss/len(train_loader):.4f}')
-        
-        # 验证
-        if (epoch + 1) % 10 == 0:
-            validate_cell_model(model, device)
 
-def validate_cell_model(model, device):
-    """验证模型"""
+            epoch_loss += loss.item()
+            pbar.set_postfix({'loss': loss.item()})
+
+        avg_train_loss = epoch_loss / len(train_loader)
+        history['train_loss'].append(avg_train_loss)
+
+        # ============ 验证阶段 ============
+        model.eval()
+        val_loss = 0.0
+        all_metrics = []
+
+        with torch.no_grad():
+            for images, masks in val_loader:
+                images = images.to(device)
+                masks = masks.to(device)
+
+                outputs = model(images)
+                loss = criterion(outputs, masks)
+                val_loss += loss.item()
+
+                # 计算指标
+                metrics = calculate_metrics(outputs, masks)
+                all_metrics.append(metrics)
+
+        avg_val_loss = val_loss / len(val_loader)
+        avg_metrics = {
+            k: np.mean([m[k] for m in all_metrics])
+            for k in all_metrics[0].keys()
+        }
+
+        history['val_loss'].append(avg_val_loss)
+        history['val_dice'].append(avg_metrics['dice'])
+        history['val_iou'].append(avg_metrics['iou'])
+
+        # 学习率调度
+        scheduler.step(avg_val_loss)
+
+        # 打印统计
+        print(f"\nEpoch {epoch+1}/{epochs}:")
+        print(f"  Train Loss: {avg_train_loss:.4f}")
+        print(f"  Val Loss: {avg_val_loss:.4f}")
+        print(f"  Dice: {avg_metrics['dice']:.4f}, IoU: {avg_metrics['iou']:.4f}")
+        print(f"  Precision: {avg_metrics['precision']:.4f}, Recall: {avg_metrics['recall']:.4f}")
+
+        # 保存最佳模型
+        if avg_metrics['dice'] > best_dice:
+            best_dice = avg_metrics['dice']
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'dice': best_dice,
+            }, 'best_cell_segmentation_model.pth')
+            print(f"  ✓ 保存最佳模型 (Dice: {best_dice:.4f})")
+
+    # ============ 5. 训练完成 ============
+    print("\n[5/6] 训练完成!")
+    print(f"最佳Dice系数: {best_dice:.4f}")
+
+    # 加载最佳模型
+    checkpoint = torch.load('best_cell_segmentation_model.pth')
+    model.load_state_dict(checkpoint['model_state_dict'])
+    print("已加载最佳模型权重")
+
+    # ============ 6. 可视化预测 ============
+    print("\n[6/6] 可视化结果...")
+    visualize_predictions(model, val_loader, device, num_samples=4)
+
+    return model, history
+
+
+def visualize_predictions(model, dataloader, device, num_samples=4):
+    """可视化预测结果"""
+
     model.eval()
-    val_dataset = CellDataset('data/cell/val/images', 'data/cell/val/masks')
-    val_loader = DataLoader(val_dataset, batch_size=4)
-    
-    metrics = SegmentationMetrics(num_classes=2)
-    
+    images, masks = next(iter(dataloader))
+
+    images = images[:num_samples].to(device)
+    masks = masks[:num_samples]
+
     with torch.no_grad():
-        for images, masks in val_loader:
-            images = images.permute(0, 3, 1, 2).to(device)
-            masks = masks.unsqueeze(1).to(device)
-            
-            outputs = model(images)
-            metrics.update(outputs, masks)
-    
-    results = metrics.get_metrics()
-    print(f"Validation - Pixel Acc: {results['pixel_accuracy']:.4f}, mIoU: {results['mean_iou']:.4f}")
+        preds = torch.sigmoid(model(images))
+
+    # 转换为numpy
+    images = images.cpu().numpy()
+    masks = masks.cpu().numpy()
+    preds = preds.cpu().numpy()
+
+    fig, axes = plt.subplots(num_samples, 3, figsize=(12, 4*num_samples))
+
+    for i in range(num_samples):
+        # 原始图像
+        img = images[i].transpose(1, 2, 0)
+        axes[i, 0].imshow(img)
+        axes[i, 0].set_title('原始图像')
+        axes[i, 0].axis('off')
+
+        # 真实标签
+        axes[i, 1].imshow(masks[i, 0], cmap='gray')
+        axes[i, 1].set_title('真实标签')
+        axes[i, 1].axis('off')
+
+        # 预测结果
+        axes[i, 2].imshow(preds[i, 0], cmap='gray')
+        axes[i, 2].set_title('预测结果')
+        axes[i, 2].axis('off')
+
+    plt.tight_layout()
+    plt.savefig('segmentation_results.png', dpi=150, bbox_inches='tight')
+    print("✓ 结果已保存到 segmentation_results.png")
+
+
+# ============ 主程序入口 ============
+
+if __name__ == '__main__':
+    # 配置
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"使用设备: {device}\n")
+
+    # 训练
+    model, history = train_cell_segmentation(
+        train_img_dir='data/cell/train/images',
+        train_mask_dir='data/cell/train/masks',
+        val_img_dir='data/cell/val/images',
+        val_mask_dir='data/cell/val/masks',
+        epochs=50,
+        batch_size=8,
+        lr=1e-4,
+        image_size=256,
+        device=device,
+    )
+
+    print("\n" + "=" * 60)
+    print("训练完成! 模型已保存为 best_cell_segmentation_model.pth")
+    print("=" * 60)
 ```
+
+---
+
+#### 预期输出
+
+**训练过程**:
+```
+============================================================
+医学图像分割训练 - U-Net
+============================================================
+
+[1/6] 加载数据集...
+找到 800 张图像
+找到 200 张图像
+训练集: 800 张图像
+验证集: 200 张图像
+
+[2/6] 构建模型...
+总参数量: 31.04M
+可训练参数: 31.04M
+
+[3/6] 配置训练...
+
+[4/6] 开始训练...
+Epochs: 50, Batch Size: 8, LR: 0.0001
+
+Epoch 1/50: 100%|██████████| 100/100 [02:15<00:00, 1.35s/it, loss=0.68]
+  Train Loss: 0.6843
+  Val Loss: 0.6234
+  Dice: 0.4523, IoU: 0.3123
+  Precision: 0.5634, Recall: 0.3891
+  ✓ 保存最佳模型 (Dice: 0.4523)
+
+Epoch 10/50:
+  Train Loss: 0.2341
+  Val Loss: 0.1892
+  Dice: 0.7856, IoU: 0.6523
+  Precision: 0.8123, Recall: 0.7654
+  ✓ 保存最佳模型 (Dice: 0.7856)
+
+...
+
+Epoch 50/50:
+  Train Loss: 0.0523
+  Val Loss: 0.0891
+  Dice: 0.9234, IoU: 0.8576
+  Precision: 0.9345, Recall: 0.9123
+  ✓ 保存最佳模型 (Dice: 0.9234)
+
+[5/6] 训练完成!
+最佳Dice系数: 0.9234
+
+[6/6] 可视化结果...
+✓ 结果已保存到 segmentation_results.png
+```
+
+---
+
+#### 推理和使用训练好的模型
+
+```python
+def predict_single_image(model_path, image_path, output_path, device='cuda'):
+    """使用训练好的模型预测单张图像"""
+
+    # 加载模型
+    model = UNet(in_channels=3, out_channels=1).to(device)
+    checkpoint = torch.load(model_path, map_location=device)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    model.eval()
+
+    # 读取图像
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    original_size = image.shape[:2]
+
+    # 预处理
+    image_resized = cv2.resize(image, (256, 256))
+    image_tensor = torch.from_numpy(image_resized).float() / 255.0
+    image_tensor = image_tensor.permute(2, 0, 1).unsqueeze(0).to(device)
+
+    # 预测
+    with torch.no_grad():
+        pred = torch.sigmoid(model(image_tensor))
+
+    # 后处理
+    pred_mask = pred.squeeze().cpu().numpy()
+    pred_mask = cv2.resize(pred_mask, (original_size[1], original_size[0]))
+    pred_mask = (pred_mask > 0.5).astype(np.uint8) * 255
+
+    # 保存
+    cv2.imwrite(output_path, pred_mask)
+    print(f"✓ 预测结果已保存到 {output_path}")
+
+    return pred_mask
+
+# 使用示例
+if __name__ == '__main__':
+    mask = predict_single_image(
+        model_path='best_cell_segmentation_model.pth',
+        image_path='test_image.png',
+        output_path='predicted_mask.png',
+    )
+```
+
+---
 
 ### 项目2：遥感图像分割
 

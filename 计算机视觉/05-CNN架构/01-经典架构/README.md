@@ -8,6 +8,10 @@
 
 ---
 
+![CNN卷积操作原理图](../images/Gemini_Generated_Image_9dbvfc9dbvfc9dbv.png "CNN卷积操作原理图")
+
+---
+
 ## 📚 文档导航
 
 ### 🎯 快速开始

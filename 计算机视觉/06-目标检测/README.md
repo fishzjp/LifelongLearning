@@ -2,6 +2,8 @@
 
 > 系统学习目标检测的核心技术，从两阶段检测器到单阶段实时检测，掌握R-CNN系列、YOLO系列、SSD等经典算法，理解IoU、mAP等评估指标。
 
+![R-CNN vs YOLO vs SSD 目标检测方法对比图](./images/Gemini_Generated_Image_bhkkxabhkkxabhkk.png "R-CNN vs YOLO vs SSD 目标检测方法对比图")
+
 ## 📚 章节概览
 
 目标检测是计算机视觉的核心任务之一，不仅要识别图像中的物体，还要定位它们的位置。
@@ -12,6 +14,22 @@
 2. **单阶段检测器**：YOLO系列（v1-v8）、SSD、RetinaNet
 3. **评估指标详解**：IoU、mAP、PR曲线
 4. **实战项目**：训练自己的检测器
+
+### YOLO目标检测流程
+
+```mermaid
+flowchart LR
+    Input[输入图像] --> Backbone[骨干网络]
+    Backbone --> Feature[特征提取]
+    Feature --> Head[检测头]
+    Head --> Bbox[边界框预测]
+    Head --> Class[类别预测]
+    Head --> Conf[置信度预测]
+    Bbox --> NMS[非极大值抑制]
+    Class --> NMS
+    Conf --> NMS
+    NMS --> Output[最终检测结果]
+```
 
 ---
 

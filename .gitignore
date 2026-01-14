@@ -25,6 +25,10 @@ ENV/
 *.swp
 *.swo
 *~
+.claude/
+.specify/
+specs/
+scripts/
 
 # Temporary files
 *.tmp

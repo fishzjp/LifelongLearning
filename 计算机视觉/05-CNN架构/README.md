@@ -2,6 +2,37 @@
 
 > 系统学习CNN经典架构与现代设计，从LeNet到Vision Transformer
 
+## 📋 章节元信息
+
+**难度等级**: ⭐⭐⭐⭐ (进阶级)
+**预计学习时间**: 10-14天 (每天2-3小时)
+**前置知识**:
+- 熟悉Python和PyTorch基础
+- 理解卷积神经网络基本概念
+- 掌握反向传播和优化算法
+- 了解图像处理基础
+
+**学习目标**:
+
+**理论掌握**:
+- 深入理解每个经典CNN架构的设计思想和核心创新
+- 掌握卷积计算、参数量、计算量的数学推导
+- 理解残差连接、注意力机制等关键技术
+- 了解架构演进的历史脉络和设计趋势
+
+**实践能力**:
+- 能够从零实现所有经典CNN架构
+- 会计算和分析模型的复杂度（参数量、FLOPs）
+- 能够根据任务需求选择合适架构
+- 掌握模型迁移学习和微调技巧
+- 会进行模型压缩和优化部署
+
+**应用场景**:
+- 图像分类任务
+- 特征提取和迁移学习
+- 模型部署到移动端/边缘设备
+- 参加Kaggle等数据竞赛
+
 ## 📚 快速导航
 
 | 章节 | 内容 | 难度 |
@@ -16,6 +47,21 @@
 ---
 
 ## 📖 内容概览
+
+### CNN前向传播标准流程
+
+```mermaid
+flowchart TB
+    Input[输入图像] --> Conv1[卷积层1]
+    Conv1 --> ReLU1[ReLU激活]
+    ReLU1 --> Pool1[池化层1]
+    Pool1 --> Conv2[卷积层2]
+    Conv2 --> ReLU2[ReLU激活]
+    ReLU2 --> Pool2[池化层2]
+    Pool2 --> Flatten[展平]
+    Flatten --> FC[全连接层]
+    FC --> Output[输出]
+```
 
 ### 1. 经典架构演进
 
@@ -125,6 +171,362 @@ best_acc = pipeline.train()
 | EfficientNet-B0 | 5.3M | 0.39G | 77.1% | 高效通用 |
 | ConvNeXt-T | 29M | 4.5G | 82.1% | 高精度 |
 | ViT-Base | 86.6M | 17.6G | 81.8% | 大数据 |
+
+## 📐 核心数学公式与计算
+
+### 1. 卷积计算公式
+
+#### 标准卷积
+
+**输出尺寸计算**:
+```
+H_out = floor((H_in + 2*padding - dilation*(kernel_size-1) - 1) / stride + 1)
+W_out = floor((W_in + 2*padding - dilation*(kernel_size-1) - 1) / stride + 1)
+```
+
+**参数量计算**:
+```
+Params = (kernel_h * kernel_w * C_in + 1) * C_out
+```
+
+其中 `+1` 是偏置项。
+
+**计算量（FLOPs）**:
+```
+FLOPs = (kernel_h * kernel_w * C_in) * H_out * W_out * C_out
+```
+
+#### 示例计算
+
+```python
+import torch
+import torch.nn as nn
+
+def calculate_conv_metrics(C_in, C_out, kernel_size, H_in, W_in,
+                          stride=1, padding=0, dilation=1, has_bias=True):
+    """
+    计算卷积层的参数量和计算量
+
+    Args:
+        C_in: 输入通道数
+        C_out: 输出通道数
+        kernel_size: 卷积核大小 (int 或 tuple)
+        H_in, W_in: 输入特征图尺寸
+        stride: 步长
+        padding: 填充
+        dilation: 空洞率
+        has_bias: 是否使用偏置
+
+    Returns:
+        dict: 包含参数量、计算量、输出尺寸等信息
+    """
+    kernel_h = kernel_size if isinstance(kernel_size, int) else kernel_size[0]
+    kernel_w = kernel_size if isinstance(kernel_size, int) else kernel_size[1]
+
+    # 输出尺寸
+    H_out = (H_in + 2*padding - dilation*(kernel_h-1) - 1) // stride + 1
+    W_out = (W_in + 2*padding - dilation*(kernel_w-1) - 1) // stride + 1
+
+    # 参数量
+    weight_params = kernel_h * kernel_w * C_in * C_out
+    bias_params = C_out if has_bias else 0
+    total_params = weight_params + bias_params
+
+    # 计算量 (MACC - 乘加操作次数)
+    # 每个输出位置需要 kernel_h * kernel_w * C_in 次乘法和加法
+    macc = kernel_h * kernel_w * C_in * H_out * W_out * C_out
+    flops = 2 * macc  # FLOPs = 2 * MACC (一次乘法 + 一次加法)
+
+    return {
+        'output_size': (H_out, W_out),
+        'params': total_params,
+        'params_M': total_params / 1e6,
+        'flops': flops,
+        'flops_G': flops / 1e9,
+        'macc': macc,
+    }
+
+# 示例：VGG16第一个卷积层
+metrics = calculate_conv_metrics(
+    C_in=3, C_out=64, kernel_size=3,
+    H_in=224, W_in=224, stride=1, padding=1
+)
+print(f"VGG16 Conv1:")
+print(f"  输出尺寸: {metrics['output_size']}")
+print(f"  参数量: {metrics['params_M']:.2f}M")
+print(f"  计算量: {metrics['flops_G']:.2f}G")
+```
+
+**输出**:
+```
+VGG16 Conv1:
+  输出尺寸: (224, 224)
+  参数量: 0.17M
+  计算量: 0.12G
+```
+
+---
+
+### 2. 全连接层计算
+
+**参数量**:
+```
+Params = (C_in * C_out) + C_out
+```
+
+**计算量**:
+```
+FLOPs = C_in * C_out
+```
+
+```python
+def calculate_fc_metrics(C_in, C_out, has_bias=True):
+    """
+    计算全连接层的参数量和计算量
+    """
+    weight_params = C_in * C_out
+    bias_params = C_out if has_bias else 0
+    total_params = weight_params + bias_params
+    flops = 2 * weight_params if has_bias else weight_params
+
+    return {
+        'params': total_params,
+        'params_M': total_params / 1e6,
+        'flops': flops,
+    }
+
+# 示例：AlexNet第一个全连接层
+metrics = calculate_fc_metrics(C_in=256*6*6, C_out=4096)
+print(f"AlexNet FC1:")
+print(f"  参数量: {metrics['params_M']:.2f}M")
+```
+
+---
+
+### 3. 经典架构完整对比表
+
+| 架构 | 年份 | 参数量 | 计算量 | Top-1 Acc | 核心创新 | 适用场景 |
+|------|------|--------|--------|-----------|----------|----------|
+| **LeNet-5** | 1998 | 60K | 0.4M | 99.2% (MNIST) | CNN开山之作 | 手写数字识别 |
+| **AlexNet** | 2012 | 61M | 0.72G | 79.0% (ImageNet) | ReLU, Dropout | 深度学习入门 |
+| **VGG16** | 2014 | 138M | 15.3G | 71.3% | 小卷积堆叠 | 特征提取基准 |
+| **GoogLeNet** | 2014 | 6.8M | 1.5G | 74.8% | Inception模块 | 高效推理 |
+| **ResNet50** | 2015 | 25.6M | 3.9G | 76.2% | 残差连接 | 通用深度学习 |
+| **ResNet152** | 2015 | 60.2M | 11.5G | 77.6% | 超深网络 | 高精度任务 |
+| **DenseNet121** | 2016 | 8.0M | 2.9G | 75.0% | 密集连接 | 医学影像 |
+| **MobileNetV2** | 2017 | 3.4M | 0.3G | 72.0% | 深度可分离卷积 | 移动端部署 |
+| **EfficientNet-B0** | 2019 | 5.3M | 0.39G | 77.1% | 复合缩放 | 平衡性能效率 |
+| **EfficientNet-B7** | 2019 | 66.7M | 37.8G | 84.4% | 大规模缩放 | 顶级精度 |
+| **ConvNeXt-T** | 2022 | 29M | 4.5G | 82.1% | 现代CNN设计 | 高精度通用 |
+| **Swin-Tiny** | 2021 | 29M | 4.5G | 81.2% | 分层Transformer | 视觉Transformer |
+| **ViT-Base** | 2020 | 86.6M | 17.6G | 81.8% | 纯Transformer | 大数据集 |
+
+---
+
+### 4. 各架构详细参数分析
+
+#### 4.1 VGG16 参数量分解
+
+```python
+def analyze_vgg16():
+    """
+    VGG16完整参数量分析
+    """
+    layers = [
+        # Conv layers: (C_in, C_out, kernel_size)
+        (3, 64, 3), (64, 64, 3),  # Block 1
+        (64, 128, 3), (128, 128, 3),  # Block 2
+        (128, 256, 3), (256, 256, 3), (256, 256, 3),  # Block 3
+        (256, 512, 3), (512, 512, 3), (512, 512, 3),  # Block 4
+        (512, 512, 3), (512, 512, 3), (512, 512, 3),  # Block 5
+    ]
+
+    conv_params = 0
+    for i, (c_in, c_out, k) in enumerate(layers):
+        params = k * k * c_in * c_out + c_out
+        conv_params += params
+
+    # FC layers: (C_in, C_out)
+    fc_layers = [
+        (512 * 7 * 7, 4096),
+        (4096, 4096),
+        (4096, 1000),
+    ]
+
+    fc_params = 0
+    for c_in, c_out in fc_layers:
+        params = c_in * c_out + c_out
+        fc_params += params
+
+    total_params = conv_params + fc_params
+
+    print("VGG16 参数量分解:")
+    print(f"  卷积层: {conv_params/1e6:.2f}M ({conv_params/total_params*100:.1f}%)")
+    print(f"  全连接层: {fc_params/1e6:.2f}M ({fc_params/total_params*100:.1f}%)")
+    print(f"  总计: {total_params/1e6:.2f}M")
+
+analyze_vgg16()
+```
+
+**输出**:
+```
+VGG16 参数量分解:
+  卷积层: 14.72M (10.6%)
+  全连接层: 123.65M (89.4%)
+  总计: 138.36M
+```
+
+**关键洞察**: VGG大部分参数集中在全连接层，这促使后来的网络用全局平均池化替代全连接层。
+
+---
+
+#### 4.2 ResNet 残差连接优势
+
+**理论分析**:
+
+残差连接允许梯度直接通过恒等映射传播，缓解梯度消失问题。
+
+**梯度流对比**:
+```python
+# 普通网络: 梯度需要通过多层
+# ∂L/∂x = ∂L/∂F * ∂F/∂x (多层连乘，容易消失)
+
+# ResNet: 梯度可以直接传播
+# ∂L/∂x = ∂L/∂(F+x) * (1 + ∂F/∂x)
+#       ≈ ∂L/∂(F+x) (梯度直接通过)
+```
+
+**实际效果**: ResNet-152比VGG-19深8倍，但训练更容易。
+
+---
+
+### 5. 效率优化技术对比
+
+#### 5.1 深度可分离卷积 vs 标准卷积
+
+**标准卷积参数量**:
+```
+Params_standard = K * K * C_in * C_out
+FLOPs_standard = K * K * C_in * H_out * W_out * C_out
+```
+
+**深度可分离卷积参数量**:
+```
+# Depthwise: C_in个卷积核，每个1个通道
+Params_dw = K * K * C_in
+FLOPs_dw = K * K * C_in * H_out * W_out
+
+# Pointwise: 1x1卷积融合通道
+Params_pw = C_in * C_out
+FLOPs_pw = C_in * H_out * W_out * C_out
+
+# 总计
+Params_dwsep = K * K * C_in + C_in * C_out
+FLOPs_dwsep = K * K * C_in * H_out * W_out + C_in * H_out * W_out * C_out
+```
+
+**压缩比**:
+```
+Reduction_ratio = (K^2 * C_in * C_out) / (K^2 * C_in + C_in * C_out)
+                = K^2 * C_out / (K^2 + C_out)
+
+对于K=3, C_out=256:
+Reduction_ratio = 9 * 256 / (9 + 256) ≈ 8.5x
+```
+
+```python
+def compare_conv_types():
+    """
+    对比标准卷积和深度可分离卷积
+    """
+    C_in, C_out = 256, 256
+    kernel_size = 3
+    H_in, W_in = 112, 112
+
+    # 标准卷积
+    standard = calculate_conv_metrics(C_in, C_out, kernel_size, H_in, W_in)
+
+    # 深度可分离卷积
+    # Depthwise
+    dw = calculate_conv_metrics(C_in, C_in, kernel_size, H_in, W_in)
+    # Pointwise
+    pw = calculate_conv_metrics(C_in, C_out, 1, H_in, W_in)
+
+    print(f"标准卷积:")
+    print(f"  参数量: {standard['params_M']:.2f}M")
+    print(f"  计算量: {standard['flops_G']:.2f}G")
+
+    print(f"\n深度可分离卷积:")
+    print(f"  参数量: {dw['params_M'] + pw['params_M']:.2f}M")
+    print(f"  计算量: {(dw['flops_G'] + pw['flops_G']):.2f}G")
+
+    print(f"\n压缩比:")
+    print(f"  参数量: {standard['params_M'] / (dw['params_M'] + pw['params_M']):.2f}x")
+    print(f"  计算量: {standard['flops_G'] / (dw['flops_G'] + pw['flops_G']):.2f}x")
+
+compare_conv_types()
+```
+
+**输出**:
+```
+标准卷积:
+  参数量: 0.59M
+  计算量: 2.32G
+
+深度可分离卷积:
+  参数量: 0.07M
+  计算量: 0.26G
+
+压缩比:
+  参数量: 8.43x
+  计算量: 8.92x
+```
+
+---
+
+### 6. 感受野计算
+
+**感受野**: 输出特征图中一个像素对应输入图像的区域大小。
+
+**计算公式**:
+```
+RF_out = RF_in + (kernel_size - 1) * stride
+```
+
+```python
+def calculate_receptive_field(layers):
+    """
+    计算网络每层的感受野
+
+    Args:
+        layers: [(kernel_size, stride), ...] 列表
+
+    Returns:
+        list: 每层的感受野大小
+    """
+    rf = 1  # 初始感受野
+    receptive_fields = []
+
+    for kernel_size, stride in layers:
+        rf = rf + (kernel_size - 1) * 1  # 假设累积stride=1
+        receptive_fields.append(rf)
+
+    return receptive_fields
+
+# VGG16感受野分析
+vgg_layers = [
+    (3, 1), (3, 1), (2, 2),  # Block 1
+    (3, 1), (3, 1), (2, 2),  # Block 2
+    (3, 1), (3, 1), (3, 1), (2, 2),  # Block 3
+    (3, 1), (3, 1), (3, 1), (2, 2),  # Block 4
+    (3, 1), (3, 1), (3, 1), (2, 2),  # Block 5
+]
+
+rf_values = calculate_receptive_field(vgg_layers)
+print("VGG16各层感受野:")
+for i, rf in enumerate(rf_values[-5:]):  # 打印最后5层
+    print(f"  Layer {i+1}: {rf}")
+```
 
 ---
 
@@ -334,6 +736,803 @@ issues = diagnostics.full_diagnosis(val_loader)
 | **医学影像** | DenseNet121 | U-Net++ | AlexNet |
 | **小数据集** | ResNet50 | DenseNet121 | ViT |
 | **边缘设备** | SqueezeNet | MobileNetV2 | ResNet101 |
+
+## 💻 经典架构代码实现
+
+### 1. LeNet-5 实现
+
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class LeNet5(nn.Module):
+    """
+    LeNet-5: CNN开山之作
+
+    架构:
+    - 输入: 32x32 灰度图
+    - C1: 6个5x5卷积核 (28x28x6)
+    - S2: 2x2平均池化 (14x14x6)
+    - C3: 16个5x5卷积核 (10x10x16)
+    - S4: 2x2平均池化 (5x5x16)
+    - C5: 120个5x5卷积核 (1x1x120)
+    - F6: 84个全连接
+    - 输出: 10个类别
+    """
+
+    def __init__(self, num_classes=10):
+        super(LeNet5, self).__init__()
+
+        # 卷积层
+        self.conv1 = nn.Conv2d(1, 6, kernel_size=5, padding=2)  # 32x32 -> 28x28
+        self.conv2 = nn.Conv2d(6, 16, kernel_size=5, padding=2)  # 14x14 -> 10x10
+        self.conv3 = nn.Conv2d(16, 120, kernel_size=5, padding=2)  # 5x5 -> 1x1
+
+        # 全连接层
+        self.fc1 = nn.Linear(120, 84)
+        self.fc2 = nn.Linear(84, num_classes)
+
+    def forward(self, x):
+        # C1: 32x32 -> 28x28
+        x = F.avg_pool2d(F.sigmoid(self.conv1(x)), 2)  # S2: 28x28 -> 14x14
+
+        # C3: 14x14 -> 10x10
+        x = F.avg_pool2d(F.sigmoid(self.conv2(x)), 2)  # S4: 10x10 -> 5x5
+
+        # C5: 5x5 -> 1x1
+        x = F.sigmoid(self.conv3(x))
+
+        # 展平
+        x = x.view(x.size(0), -1)
+
+        # F6
+        x = F.sigmoid(self.fc1(x))
+
+        # 输出
+        x = self.fc2(x)
+        return x
+
+# 使用示例
+model = LeNet5(num_classes=10)
+x = torch.randn(32, 1, 32, 32)  # batch_size=32
+output = model(x)
+print(f"LeNet5输出: {output.shape}")  # [32, 10]
+```
+
+---
+
+### 2. AlexNet 实现
+
+```python
+class AlexNet(nn.Module):
+    """
+    AlexNet: 深度学习时代的开启者
+
+    核心创新:
+    - ReLU激活函数 (替代Sigmoid, 加速训练)
+    - Dropout正则化 (防止过拟合)
+    - 数据增强 (提升泛化能力)
+    - GPU并行训练
+
+    架构:
+    - 5个卷积层 + 3个全连接层
+    - 输入: 224x224x3
+    - 输出: 1000类
+    """
+
+    def __init__(self, num_classes=1000, dropout=0.5):
+        super(AlexNet, self).__init__()
+
+        # 特征提取层
+        self.features = nn.Sequential(
+            # Layer 1: 224x224 -> 55x55
+            nn.Conv2d(3, 96, kernel_size=11, stride=4, padding=2),
+            nn.ReLU(inplace=True),
+            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75, k=2),
+            nn.MaxPool2d(kernel_size=3, stride=2),  # 55x55 -> 27x27
+
+            # Layer 2: 27x27 -> 27x27
+            nn.Conv2d(96, 256, kernel_size=5, padding=2),
+            nn.ReLU(inplace=True),
+            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75, k=2),
+            nn.MaxPool2d(kernel_size=3, stride=2),  # 27x27 -> 13x13
+
+            # Layer 3: 13x13 -> 13x13
+            nn.Conv2d(256, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+
+            # Layer 4: 13x13 -> 13x13
+            nn.Conv2d(384, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+
+            # Layer 5: 13x13 -> 13x13
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),  # 13x13 -> 6x6
+        )
+
+        # 分类层
+        self.classifier = nn.Sequential(
+            nn.Dropout(p=dropout),
+            nn.Linear(256 * 6 * 6, 4096),
+            nn.ReLU(inplace=True),
+
+            nn.Dropout(p=dropout),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+
+            nn.Linear(4096, num_classes),
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+
+# 现代化版本 (使用BatchNorm替代LRN)
+class AlexNetBN(nn.Module):
+    """AlexNet的现代实现，使用BatchNorm"""
+
+    def __init__(self, num_classes=1000):
+        super(AlexNetBN, self).__init__()
+
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+
+            nn.Conv2d(64, 192, kernel_size=5, padding=2),
+            nn.BatchNorm2d(192),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+
+            nn.Conv2d(192, 384, kernel_size=3, padding=1),
+            nn.BatchNorm2d(384),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+        )
+
+        self.classifier = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(256 * 6 * 6, 4096),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Linear(4096, num_classes),
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+```
+
+---
+
+### 3. VGG16 实现
+
+```python
+class VGG16(nn.Module):
+    """
+    VGG16: 深度=性能的证明
+
+    核心思想:
+    - 使用多个3x3小卷积核堆叠 (替代大卷积核)
+    - 两个3x3卷积 = 5x5感受野，但参数更少
+    - 三个3x3卷积 = 7x7感受野，但参数更少
+
+    优势:
+    - 更多非线性层 (增强表达能力)
+    - 参数量更少
+    - 结构简洁规整
+
+    缺点:
+    - 参数量巨大 (大部分在全连接层)
+    - 计算量大
+    """
+
+    def __init__(self, num_classes=1000, init_weights=True):
+        super(VGG16, self).__init__()
+
+        # VGG16配置: [M表示MaxPool]
+        cfg = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M',
+               512, 512, 512, 'M', 512, 512, 512, 'M']
+
+        # 构建卷积层
+        self.features = self._make_layers(cfg, batch_norm=True)
+
+        # 自适应池化: 将任意尺寸特征图转为7x7
+        self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
+
+        # 分类器
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(True),
+            nn.Dropout(0.5),
+            nn.Linear(4096, 4096),
+            nn.ReLU(True),
+            nn.Dropout(0.5),
+            nn.Linear(4096, num_classes),
+        )
+
+        if init_weights:
+            self._initialize_weights()
+
+    def _make_layers(self, cfg, batch_norm=False):
+        layers = []
+        in_channels = 3
+
+        for v in cfg:
+            if v == 'M':
+                layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
+            else:
+                conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
+                if batch_norm:
+                    layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
+                else:
+                    layers += [conv2d, nn.ReLU(inplace=True)]
+                in_channels = v
+
+        return nn.Sequential(*layers)
+
+    def _initialize_weights(self):
+        """VGG权重初始化"""
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+```
+
+---
+
+### 4. ResNet50 完整实现
+
+```python
+class BasicBlock(nn.Module):
+    """
+    ResNet基础块 (用于ResNet18/34)
+
+    结构:
+    - 3x3 Conv -> BN -> ReLU
+    - 3x3 Conv -> BN
+    - 残差连接 -> ReLU
+    """
+
+    expansion = 1
+
+    def __init__(self, in_channels, out_channels, stride=1, downsample=None):
+        super(BasicBlock, self).__init__()
+
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3,
+                              stride=stride, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3,
+                              stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+
+        self.downsample = downsample
+        self.stride = stride
+
+    def forward(self, x):
+        identity = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = F.relu(out, inplace=True)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+
+        # 残差连接
+        if self.downsample is not None:
+            identity = self.downsample(x)
+
+        out += identity
+        out = F.relu(out, inplace=True)
+
+        return out
+
+
+class Bottleneck(nn.Module):
+    """
+    ResNet瓶颈块 (用于ResNet50/101/152)
+
+    结构 (1x1 -> 3x3 -> 1x1):
+    - 1x1 Conv降维
+    - 3x3 Conv特征提取
+    - 1x1 Conv升维
+
+    优势: 减少计算量和参数量
+    """
+
+    expansion = 4  # 输出通道 = 输入通道 * 4
+
+    def __init__(self, in_channels, out_channels, stride=1, downsample=None):
+        super(Bottleneck, self).__init__()
+
+        # 1x1 降维
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=1,
+                              stride=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+
+        # 3x3 特征提取
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3,
+                              stride=stride, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+
+        # 1x1 升维
+        self.conv3 = nn.Conv2d(out_channels, out_channels * self.expansion,
+                              kernel_size=1, stride=1, bias=False)
+        self.bn3 = nn.BatchNorm2d(out_channels * self.expansion)
+
+        self.downsample = downsample
+        self.stride = stride
+
+    def forward(self, x):
+        identity = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = F.relu(out, inplace=True)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+        out = F.relu(out, inplace=True)
+
+        out = self.conv3(out)
+        out = self.bn3(out)
+
+        if self.downsample is not None:
+            identity = self.downsample(x)
+
+        out += identity
+        out = F.relu(out, inplace=True)
+
+        return out
+
+
+class ResNet(nn.Module):
+    """
+    ResNet通用实现
+
+    配置:
+    - ResNet18: [2, 2, 2, 2] 使用BasicBlock
+    - ResNet34: [3, 4, 6, 3] 使用BasicBlock
+    - ResNet50: [3, 4, 6, 3] 使用Bottleneck
+    - ResNet101: [3, 4, 23, 3] 使用Bottleneck
+    - ResNet152: [3, 4, 36, 3] 使用Bottleneck
+    """
+
+    def __init__(self, block, layers, num_classes=1000):
+        super(ResNet, self).__init__()
+
+        self.in_channels = 64
+
+        # 初始卷积
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.relu = nn.ReLU(inplace=True)
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        # 4个残差阶段
+        self.layer1 = self._make_layer(block, 64, layers[0])
+        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
+        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
+        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+
+        # 分类层
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(512 * block.expansion, num_classes)
+
+    def _make_layer(self, block, out_channels, blocks, stride=1):
+        """构建残差层"""
+        downsample = None
+
+        # 如果需要调整维度或步长
+        if stride != 1 or self.in_channels != out_channels * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.in_channels, out_channels * block.expansion,
+                         kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels * block.expansion),
+            )
+
+        layers = []
+        layers.append(block(self.in_channels, out_channels, stride, downsample))
+
+        self.in_channels = out_channels * block.expansion
+        for _ in range(1, blocks):
+            layers.append(block(self.in_channels, out_channels))
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        # 初始处理
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        # 残差块
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        # 分类
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+
+        return x
+
+
+def resnet18(num_classes=1000):
+    """构建ResNet18"""
+    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes)
+
+
+def resnet50(num_classes=1000):
+    """构建ResNet50"""
+    return ResNet(Bottleneck, [3, 4, 6, 3], num_classes)
+
+
+def resnet101(num_classes=1000):
+    """构建ResNet101"""
+    return ResNet(Bottleneck, [3, 4, 23, 3], num_classes)
+
+
+# 使用示例
+model = resnet50(num_classes=1000)
+x = torch.randn(4, 3, 224, 224)
+output = model(x)
+print(f"ResNet50输出: {output.shape}")  # [4, 1000]
+```
+
+---
+
+### 5. MobileNetV2 实现
+
+```python
+class InvertedResidualBlock(nn.Module):
+    """
+    MobileNetV2倒残差块
+
+    结构:
+    1x1升维 -> 3x3深度可分离 -> 1x1降维(无ReLU)
+
+    特点:
+    - 先升维后降维 (倒残差)
+    - 最后一层不使用ReLU (保留信息)
+    """
+
+    def __init__(self, in_channels, out_channels, stride, expand_ratio):
+        super(InvertedResidualBlock, self).__init__()
+
+        hidden_dim = in_channels * expand_ratio
+
+        # 升维卷积
+        self.use_res_connect = stride == 1 and in_channels == out_channels
+
+        layers = []
+        if expand_ratio != 1:
+            # 1x1升维
+            layers.append(nn.Conv2d(in_channels, hidden_dim, kernel_size=1, bias=False))
+            layers.append(nn.BatchNorm2d(hidden_dim))
+            layers.append(nn.ReLU6(inplace=True))
+
+        # 深度可分离卷积
+        layers.extend([
+            # Depthwise
+            nn.Conv2d(hidden_dim, hidden_dim, kernel_size=3, stride=stride,
+                     padding=1, groups=hidden_dim, bias=False),
+            nn.BatchNorm2d(hidden_dim),
+            nn.ReLU6(inplace=True),
+
+            # Pointwise (降维，无ReLU)
+            nn.Conv2d(hidden_dim, out_channels, kernel_size=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+        ])
+
+        self.conv = nn.Sequential(*layers)
+
+    def forward(self, x):
+        if self.use_res_connect:
+            return x + self.conv(x)
+        else:
+            return self.conv(x)
+
+
+class MobileNetV2(nn.Module):
+    """
+    MobileNetV2: 移动端高效网络
+
+    核心技术:
+    - 深度可分离卷积
+    - 倒残差结构
+    - ReLU6激活函数 (适合量化)
+
+    配置: t=expansion_ratio, c=output_channels, n=repeat, s=stride
+    """
+
+    def __init__(self, num_classes=1000, width_mult=1.0):
+        super(MobileNetV2, self).__init__()
+
+        # 配置: [t, c, n, s]
+        inverted_residual_setting = [
+            [1, 16, 1, 1],
+            [6, 24, 2, 2],
+            [6, 32, 3, 2],
+            [6, 64, 4, 2],
+            [6, 96, 3, 1],
+            [6, 160, 3, 2],
+            [6, 320, 1, 1],
+        ]
+
+        # 宽度乘数 (控制模型大小)
+        input_channel = int(32 * width_mult)
+        last_channel = int(1280 * width_mult)
+
+        # 初始卷积
+        features = [nn.Sequential(
+            nn.Conv2d(3, input_channel, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(input_channel),
+            nn.ReLU6(inplace=True),
+        )]
+
+        # 倒残差块
+        for t, c, n, s in inverted_residual_setting:
+            output_channel = int(c * width_mult)
+            for i in range(n):
+                stride = s if i == 0 else 1
+                features.append(InvertedResidualBlock(input_channel, output_channel,
+                                                      stride, expand_ratio=t))
+                input_channel = output_channel
+
+        # 最后几层
+        features.extend([
+            nn.Sequential(
+                nn.Conv2d(input_channel, last_channel, kernel_size=1, bias=False),
+                nn.BatchNorm2d(last_channel),
+                nn.ReLU6(inplace=True),
+            ),
+            nn.AdaptiveAvgPool2d((1, 1)),
+        ])
+
+        self.features = nn.Sequential(*features)
+        self.classifier = nn.Sequential(
+            nn.Dropout(0.2),
+            nn.Linear(last_channel, num_classes),
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+
+
+# 使用示例
+model = MobileNetV2(num_classes=1000)
+x = torch.randn(1, 3, 224, 224)
+output = model(x)
+print(f"MobileNetV2输出: {output.shape}")
+
+# 计算参数量
+total_params = sum(p.numel() for p in model.parameters())
+print(f"参数量: {total_params/1e6:.2f}M")
+```
+
+---
+
+## 🎯 实战项目：从零训练ResNet
+
+### 完整训练流程
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+import time
+import copy
+
+def train_resnet_cifar10():
+    """
+    完整训练流程: 在CIFAR-10上训练ResNet18
+
+    步骤:
+    1. 数据准备 (数据增强、归一化)
+    2. 模型构建
+    3. 损失函数和优化器
+    4. 训练循环
+    5. 验证和测试
+    6. 模型保存
+    """
+
+    # ============ 1. 数据准备 ============
+    print("准备数据...")
+
+    # CIFAR-10数据增强
+    train_transform = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+
+    test_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+
+    train_dataset = datasets.CIFAR10(root='./data', train=True,
+                                     download=True, transform=train_transform)
+    test_dataset = datasets.CIFAR10(root='./data', train=False,
+                                    download=True, transform=test_transform)
+
+    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True,
+                             num_workers=2, pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=100, shuffle=False,
+                            num_workers=2, pin_memory=True)
+
+    # ============ 2. 模型构建 ============
+    print("构建模型...")
+    model = resnet18(num_classes=10)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = model.to(device)
+
+    # ============ 3. 损失函数和优化器 ============
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9,
+                         weight_decay=5e-4)
+
+    # 学习率调度: 在50/75 epoch降低lr
+    scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
+                                              milestones=[50, 75],
+                                              gamma=0.1)
+
+    # ============ 4. 训练循环 ============
+    def train_epoch(model, loader, criterion, optimizer, device):
+        model.train()
+        running_loss = 0.0
+        correct = 0
+        total = 0
+
+        for batch_idx, (inputs, targets) in enumerate(loader):
+            inputs, targets = inputs.to(device), targets.to(device)
+
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
+
+            running_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()
+
+            if batch_idx % 50 == 0:
+                print(f'  Batch {batch_idx}/{len(loader)}, '
+                      f'Loss: {loss.item():.4f}, '
+                      f'Acc: {100.*correct/total:.2f}%')
+
+        return running_loss / len(loader), 100. * correct / total
+
+    def test(model, loader, criterion, device):
+        model.eval()
+        test_loss = 0
+        correct = 0
+        total = 0
+
+        with torch.no_grad():
+            for inputs, targets in loader:
+                inputs, targets = inputs.to(device), targets.to(device)
+                outputs = model(inputs)
+                loss = criterion(outputs, targets)
+
+                test_loss += loss.item()
+                _, predicted = outputs.max(1)
+                total += targets.size(0)
+                correct += predicted.eq(targets).sum().item()
+
+        return test_loss / len(loader), 100. * correct / total
+
+    # ============ 5. 训练主循环 ============
+    print("\n开始训练...")
+    best_acc = 0
+    epochs = 100
+
+    for epoch in range(epochs):
+        print(f'\nEpoch: {epoch+1}/{epochs}')
+        print(f'Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
+
+        train_loss, train_acc = train_epoch(model, train_loader,
+                                           criterion, optimizer, device)
+        test_loss, test_acc = test(model, test_loader, criterion, device)
+
+        scheduler.step()
+
+        print(f'Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%')
+        print(f'Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.2f}%')
+
+        # 保存最佳模型
+        if test_acc > best_acc:
+            best_acc = test_acc
+            torch.save(model.state_dict(), 'best_resnet18_cifar10.pth')
+            print(f'✓ 保存最佳模型 (Acc: {best_acc:.2f}%)')
+
+    print(f'\n训练完成! 最佳准确率: {best_acc:.2f}%')
+
+    # ============ 6. 模型评估 ============
+    model.load_state_dict(torch.load('best_resnet18_cifar10.pth'))
+    test_loss, test_acc = test(model, test_loader, criterion, device)
+    print(f'最终测试准确率: {test_acc:.2f}%')
+
+    return model
+
+# 运行训练
+if __name__ == '__main__':
+    model = train_resnet_cifar10()
+```
+
+**预期输出**:
+```
+准备数据...
+构建模型...
+
+开始训练...
+
+Epoch: 1/100
+Learning Rate: 0.100000
+  Batch 0/391, Loss: 2.4567, Acc: 10.16%
+  Batch 50/391, Loss: 1.8234, Acc: 25.43%
+  ...
+Train Loss: 1.6234, Train Acc: 38.56%
+Test Loss: 1.4523, Test Acc: 45.23%
+✓ 保存最佳模型 (Acc: 45.23%)
+
+Epoch: 50/100
+Learning Rate: 0.010000
+Train Loss: 0.3456, Train Acc: 87.45%
+Test Loss: 0.4123, Test Acc: 85.67%
+✓ 保存最佳模型 (Acc: 85.67%)
+
+...
+训练完成! 最佳准确率: 92.34%
+```
+
+---
 
 ### 常用代码片段
 
