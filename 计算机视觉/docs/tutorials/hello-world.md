@@ -435,7 +435,7 @@ bordered = cv2.copyMakeBorder(
 
 ---
 
-**更新**: 2025-01-13
+**更新**: 2026-01-13
 **适用于**: Python 3.10+, OpenCV 4.8+, NumPy 1.24+
 
 ---

@@ -63,7 +63,7 @@ INSERT INTO users (username, password) VALUES ('test_user', 'test_pass');
 
 | 项目 | 信息 |
 |------|------|
-| 执行时间 | 2025-01-01 10:00:00 |
+| 执行时间 | 2026-01-01 10:00:00 |
 | 执行环境 | Chrome 120.0 |
 | 执行人 | [姓名] |
 | 测试结果 | 通过/失败/阻塞 |
@@ -89,5 +89,5 @@ INSERT INTO users (username, password) VALUES ('test_user', 'test_pass');
 ---
 
 **模板版本**：v1.0  
-**最后更新**：2025-12-29
+**最后更新**：2026-12-29
 

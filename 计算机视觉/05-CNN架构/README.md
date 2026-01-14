@@ -1628,7 +1628,7 @@ model_quantized = torch.quantization.convert(model_prepared)
 
 ---
 
-**最后更新：2025年12月**
+**最后更新：2026年12月**
 
 *本章内容持续更新中，欢迎反馈和贡献！*
 

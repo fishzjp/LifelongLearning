@@ -3,7 +3,7 @@
 > **深度=性能**，通过小卷积核堆叠实现深层网络，探索深度极限
 >
 > **参考论文**: "Very Deep Convolutional Networks for Large-Scale Image Recognition" (Simonyan & Zisserman, 2014)  
-> **难度**: ⭐⭐⭐ | **版本**: v1.1 | **更新**: 2025-12-23
+> **难度**: ⭐⭐⭐ | **版本**: v1.1 | **更新**: 2026-12-23
 
 ---
 
@@ -596,6 +596,6 @@ scaler.update()
 ---
 
 **文档版本**: v1.1  
-**最后更新**: 2025-12-23  
+**最后更新**: 2026-12-23  
 **难度等级**: ⭐⭐⭐  
 **参考论文**: "Very Deep Convolutional Networks for Large-Scale Image Recognition" (Simonyan & Zisserman, 2014)

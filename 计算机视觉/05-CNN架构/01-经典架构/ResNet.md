@@ -3,7 +3,7 @@
 > **残差连接解决深度网络退化问题**，让网络可以无限加深（1000+层）
 >
 > **参考论文**: "Deep Residual Learning for Image Recognition" (He et al., 2015)  
-> **难度**: ⭐⭐⭐⭐ | **版本**: v1.1 | **更新**: 2025-12-23
+> **难度**: ⭐⭐⭐⭐ | **版本**: v1.1 | **更新**: 2026-12-23
 
 ---
 
@@ -704,6 +704,6 @@ quantized_model = torch.quantization.prepare(model)
 ---
 
 **文档版本**: v1.1  
-**最后更新**: 2025-12-23  
+**最后更新**: 2026-12-23  
 **难度等级**: ⭐⭐⭐⭐  
 **参考论文**: "Deep Residual Learning for Image Recognition" (He et al., 2015)

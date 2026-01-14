@@ -3,7 +3,7 @@
 > **深度学习的引爆点**，ReLU和Dropout解决了深层网络训练难题，在ImageNet上夺冠
 >
 > **参考论文**: "ImageNet Classification with Deep Convolutional Neural Networks" (Krizhevsky et al., 2012)  
-> **难度**: ⭐⭐⭐ | **版本**: v1.1 | **更新**: 2025-12-23
+> **难度**: ⭐⭐⭐ | **版本**: v1.1 | **更新**: 2026-12-23
 
 ---
 
@@ -510,6 +510,6 @@ for param in model.features.parameters():
 ---
 
 **文档版本**: v1.1  
-**最后更新**: 2025-12-23  
+**最后更新**: 2026-12-23  
 **难度等级**: ⭐⭐⭐  
 **参考论文**: "ImageNet Classification with Deep Convolutional Neural Networks" (Krizhevsky et al., 2012)

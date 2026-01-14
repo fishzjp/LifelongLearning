@@ -327,5 +327,5 @@ pip install mypy  # 类型检查
 
 ---
 
-**更新**: 2025-01-13
+**更新**: 2026-01-13
 **适用于**: Python 3.10+, macOS/Linux/Windows

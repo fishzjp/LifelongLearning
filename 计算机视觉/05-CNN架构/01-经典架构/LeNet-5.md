@@ -3,7 +3,7 @@
 > **CNN开山之作**，奠定了现代CNN的基本范式
 >
 > **参考论文**: "Gradient-Based Learning Applied to Document Recognition" (LeCun et al., 1998)  
-> **难度**: ⭐⭐ | **版本**: v1.1 | **更新**: 2025-12-23
+> **难度**: ⭐⭐ | **版本**: v1.1 | **更新**: 2026-12-23
 
 ---
 
@@ -533,6 +533,6 @@ class LeNet5_Flexible(nn.Module):
 ---
 
 **文档版本**: v1.1  
-**最后更新**: 2025-12-23  
+**最后更新**: 2026-12-23  
 **难度等级**: ⭐⭐  
 **参考论文**: "Gradient-Based Learning Applied to Document Recognition" (LeCun et al., 1998)

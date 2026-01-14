@@ -287,5 +287,5 @@ pip install pillow  # 图像IO增强
 
 ---
 
-**更新**: 2025-01-13
+**更新**: 2026-01-13
 **适用于**: Python 3.10+, macOS/Linux/Windows
