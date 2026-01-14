@@ -1837,4 +1837,4 @@ prof.export_chrome_trace("trace.json")  # 在chrome://tracing查看
 
 **恭喜！完成进阶主题学习，你已经站在了计算机视觉的前沿！** 🎉
 
-*最后更新：2026年12月*
+*最后更新：2025年12月*

@@ -2442,4 +2442,4 @@ def monitor_segmentation_training(log_file):
 
 **本章结束，建议学习时间：1-2周**
 
-*最后更新：2026年12月*
+*最后更新：2025年12月*
