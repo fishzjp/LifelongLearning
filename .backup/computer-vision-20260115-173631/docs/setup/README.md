@@ -1,18 +1,5 @@
 # 环境配置傻瓜式教程
 
-> **一句话总结**: 环境配置傻瓜式教程的详细讲解与实战指南
-
-> **难度等级**: ⭐⭐⭐ (中级)
-> **预计学习时间**: 2-3天
-> **前置知识**: 待补充
-> **学习目标**:
-> - 理论: 待补充
-> - 实践: 待补充
-> - 应用: 待补充
-
----
-
-
 > **15分钟完成** - 从零开始配置计算机视觉学习环境
 
 ---
@@ -134,9 +121,6 @@ jupyter notebook
 创建测试文件 `test_env.py`:
 
 ```python
-
-# 依赖: cv2, matplotlib, numpy, torch
-# 安装: pip install cv2 matplotlib numpy torch
 import numpy as np
 import cv2
 import torch
@@ -305,7 +289,3 @@ pip install pillow  # 图像IO增强
 
 **更新**: 2026-01-13
 **适用于**: Python 3.10+, macOS/Linux/Windows
-
----
-
-*最后更新: 2026-01-15*

@@ -1,18 +1,5 @@
 # Hello World - 你的第一个计算机视觉程序
 
-> **一句话总结**: Hello World - 你的第一个计算机视觉程序的详细讲解与实战指南
-
-> **难度等级**: ⭐⭐⭐ (中级)
-> **预计学习时间**: 4-5天
-> **前置知识**: 待补充
-> **学习目标**:
-> - 理论: 待补充
-> - 实践: 待补充
-> - 应用: 待补充
-
----
-
-
 > **5分钟完成** - 从零开始运行第一个CV程序
 
 ---
@@ -48,9 +35,6 @@ python -c "import cv2; import numpy as np; print('✅ 环境配置成功！')"
 创建一个测试图像，或下载示例图像：
 
 ```python
-
-# 依赖: cv2, numpy
-# 安装: pip install cv2 numpy
 # 创建测试图像
 import numpy as np
 import cv2
@@ -76,9 +60,6 @@ print("✅ 测试图像已创建：test_image.jpg")
 创建文件 `hello_world.py`：
 
 ```python
-
-# 依赖: cv2, matplotlib, numpy
-# 安装: pip install cv2 matplotlib numpy
 import cv2
 import numpy as np
 
@@ -264,9 +245,6 @@ python hello_world.py
 ### 图像是数字数组
 
 ```python
-
-# 依赖: numpy
-# 安装: pip install numpy
 import numpy as np
 
 # 创建一个简单的3x3彩色图像
@@ -463,7 +441,3 @@ bordered = cv2.copyMakeBorder(
 ---
 
 **返回**: [环境配置](../setup/README.md) | [主目录](../../README.md) | [下一章: 基础概念](../../01-基础概念/README.md)
-
----
-
-*最后更新: 2026-01-15*
