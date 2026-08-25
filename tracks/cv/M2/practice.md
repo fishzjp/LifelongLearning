@@ -1,0 +1,631 @@
+# M2 练习：从手写网络到调参
+
+> **里程碑**：[M2 · 让机器学习看图](README.md)
+> **练习数量**：5 个，从手写反向传播到完整调参
+> **总预计时间**：3-4 小时
+
+---
+
+## 练习清单
+| 练习 | 主题 | 难度 | 预计时间 | 状态 |
+|------|------|------|----------|------|
+| 练习1 | 神经网络前向传播 | ⭐⭐⭐☆☆ | 40分钟 | ☐ 待完成 |
+| 练习2 | 激活函数实现与对比 | ⭐⭐☆☆☆ | 30分钟 | ☐ 待完成 |
+| 练习3 | 损失函数与梯度 | ⭐⭐⭐⭐☆ | 50分钟 | ☐ 待完成 |
+| 练习4 | 反向传播实现 | ⭐⭐⭐⭐⭐ | 60分钟 | ☐ 待完成 |
+| 练习5 | 简单分类器训练 | ⭐⭐⭐⭐☆ | 60分钟 | ☐ 待完成 |
+
+---
+
+## 练习1: 神经网络前向传播
+### 练习信息
+- **难度**: ⭐⭐⭐☆☆
+- **预计时间**: 40分钟
+- **学习目标**:
+  - [ ] 理解神经网络的前向传播过程
+  - [ ] 实现多层神经网络的前向传播
+  - [ ] 理解矩阵运算在神经网络中的应用
+
+### 任务描述
+从零实现一个多层神经网络的前向传播：
+1. 实现单层神经网络（输入层→隐藏层→输出层）
+2. 实现多层神经网络（可配置层数和神经元数）
+3. 可视化网络结构
+
+### 提示
+**网络结构示例**:
+```
+输入层: 3个神经元
+隐藏层1: 4个神经元 (ReLU)
+隐藏层2: 5个神经元 (ReLU)
+输出层: 2个神经元 (Softmax)
+```
+
+**前向传播公式**:
+$$
+z^{[l]} = W^{[l]} a^{[l-1]} + b^{[l]}
+$$
+$$
+a^{[l]} = \sigma(z^{[l]})
+$$
+
+### 评估标准
+- [ ] 实现可配置的网络结构（30分）
+- [ ] 支持多种激活函数（20分）
+- [ ] 正确的矩阵运算（20分）
+- [ ] 网络可视化（15分）
+- [ ] 代码质量和注释（15分）
+
+### 参考答案
+```python
+
+# 依赖: matplotlib, numpy
+# 安装: pip install matplotlib numpy
+import numpy as np
+import matplotlib.pyplot as plt
+
+class NeuralNetwork:
+    """神经网络类 - 练习1"""
+
+    def __init__(self, layer_sizes):
+        """
+        初始化神经网络
+
+        Args:
+            layer_sizes: 列表，如 [3, 4, 5, 2] 表示:
+                        输入3 → 隐藏4 → 隐藏5 → 输出2
+        """
+        self.layer_sizes = layer_sizes
+        self.num_layers = len(layer_sizes)
+        self.weights = []
+        self.biases = []
+
+        # Xavier初始化
+        for i in range(self.num_layers - 1):
+            n_in = layer_sizes[i]
+            n_out = layer_sizes[i + 1]
+            limit = np.sqrt(6 / (n_in + n_out))
+            W = np.random.uniform(-limit, limit, (n_in, n_out))
+            b = np.zeros((1, n_out))
+            self.weights.append(W)
+            self.biases.append(b)
+
+        print(f"创建网络结构: {' → '.join(map(str, layer_sizes))}")
+        total_params = sum(W.size + b.size for W, b in zip(self.weights, self.biases))
+        print(f"总参数量: {total_params}")
+
+    def forward(self, X, activation='relu'):
+        """
+        前向传播
+
+        Args:
+            X: 输入数据 (batch_size, input_size)
+            activation: 隐藏层激活函数 ('relu', 'sigmoid', 'tanh')
+
+        Returns:
+            output: 网络输出
+        """
+        self.activations = [X]
+        self.z_values = []
+
+        for i in range(self.num_layers - 1):
+            # 线性变换
+            z = np.dot(self.activations[-1], self.weights[i]) + self.biases[i]
+            self.z_values.append(z)
+
+            # 激活函数
+            if i == self.num_layers - 2:  # 输出层
+                a = self.softmax(z)
+            else:  # 隐藏层
+                if activation == 'relu':
+                    a = np.maximum(0, z)
+                elif activation == 'sigmoid':
+                    a = 1 / (1 + np.exp(-z))
+                elif activation == 'tanh':
+                    a = np.tanh(z)
+
+            self.activations.append(a)
+
+        return self.activations[-1]
+
+    @staticmethod
+    def softmax(z):
+        """Softmax激活函数"""
+        exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+        return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+
+    def visualize_network(self):
+        """可视化网络结构"""
+        fig, ax = plt.subplots(figsize=(12, 8))
+
+        layer_positions = []
+        x_offset = 0
+        layer_spacing = 2.5
+
+        for i, size in enumerate(self.layer_sizes):
+            y_positions = np.linspace(0, size - 1, size)
+            x_positions = np.full(size, x_offset)
+            layer_positions.append((x_positions, y_positions))
+
+            # 绘制神经元
+            color = 'lightcoral' if i == len(self.layer_sizes) - 1 else 'lightblue'
+            ax.scatter(x_positions, y_positions, s=200, zorder=3, c=color)
+
+            # 层标签
+            if i == 0:
+                label = f'输入层\n({size})'
+            elif i == len(self.layer_sizes) - 1:
+                label = f'输出层\n({size})'
+            else:
+                label = f'隐藏层{i}\n({size})'
+
+            ax.text(x_offset, size, label, ha='center', va='bottom',
+                   fontsize=10, fontweight='bold')
+
+            x_offset += layer_spacing
+
+        # 绘制连接线（简化）
+        for i in range(len(layer_positions) - 1):
+            x1, y1 = layer_positions[i]
+            x2, y2 = layer_positions[i + 1]
+
+            # 只绘制部分连接，避免过于密集
+            for j in range(min(3, len(y1))):
+                for k in range(min(3, len(y2))):
+                    ax.plot([x1[j], x2[k]], [y1[j], y2[k]],
+                           'gray', alpha=0.2, linewidth=0.5, zorder=1)
+
+        ax.set_xlim(-0.5, x_offset - 1.5)
+        ax.set_ylim(-1, max(self.layer_sizes))
+        ax.axis('off')
+        ax.set_title('神经网络结构可视化', fontsize=14, fontweight='bold')
+        plt.tight_layout()
+        plt.savefig('/tmp/exercise1_network_structure.png', dpi=100)
+        print("网络结构图已保存到: /tmp/exercise1_network_structure.png")
+
+
+def exercise1_forward_propagation():
+    """练习1: 神经网络前向传播"""
+    print("="*60)
+    print("练习1: 神经网络前向传播")
+    print("="*60)
+
+    # 1. 创建网络
+    print("\n1. 创建神经网络...")
+    nn = NeuralNetwork([3, 4, 5, 2])
+    nn.visualize_network()
+
+    # 2. 测试前向传播
+    print("\n2. 测试前向传播...")
+    X = np.array([[0.5, 0.8, 0.3],
+                  [0.2, 0.1, 0.9],
+                  [0.7, 0.6, 0.4]])
+
+    output = nn.forward(X)
+    print(f"输入形状: {X.shape}")
+    print(f"输出形状: {output.shape}")
+    print(f"输出概率和: {np.sum(output, axis=1)}")
+
+    # 3. 打印各层激活值
+    print("\n3. 各层激活值统计:")
+    for i, activation in enumerate(nn.activations):
+        print(f"层 {i}: 形状={activation.shape}, "
+              f"均值={activation.mean():.4f}, "
+              f"标准差={activation.std():.4f}")
+
+    print("\n" + "="*60)
+    print("练习1完成!")
+    print("="*60)
+
+    return nn
+
+
+if __name__ == "__main__":
+    nn = exercise1_forward_propagation()
+```
+
+---
+
+## 练习2: 激活函数实现与对比
+### 练习信息
+- **难度**: ⭐⭐☆☆☆
+- **预计时间**: 30分钟
+- **学习目标**:
+  - [ ] 理解不同激活函数的特性
+  - [ ] 实现常见激活函数
+  - [ ] 对比激活函数的效果
+
+### 任务描述
+实现并可视化对比以下激活函数：
+1. Sigmoid
+2. Tanh
+3. ReLU
+4. Leaky ReLU
+5. Softmax
+
+### 提示
+**激活函数特点**:
+- Sigmoid: 输出(0,1)，适合二分类
+- Tanh: 输出(-1,1)，零中心
+- ReLU: 计算简单，解决梯度消失
+- Leaky ReLU: 解决ReLU死亡问题
+
+### 评估标准
+- [ ] 实现5种激活函数（30分）
+- [ ] 实现导数计算（20分）
+- [ ] 可视化对比（30分）
+- [ ] 分析优缺点（20分）
+
+### 核心代码
+```python
+def exercise2_activation_functions():
+    """练习2: 激活函数实现与对比"""
+
+    # 定义激活函数
+    def sigmoid(x):
+        return 1 / (1 + np.exp(-x))
+
+    def sigmoid_derivative(x):
+        s = sigmoid(x)
+        return s * (1 - s)
+
+    def relu(x):
+        return np.maximum(0, x)
+
+    def relu_derivative(x):
+        return np.where(x > 0, 1, 0)
+
+    def leaky_relu(x, alpha=0.01):
+        return np.where(x > 0, x, alpha * x)
+
+    def leaky_relu_derivative(x, alpha=0.01):
+        return np.where(x > 0, 1, alpha)
+
+    def softmax(x):
+        exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))
+        return exp_x / np.sum(exp_x, axis=1, keepdims=True)
+
+    # 可视化
+    x = np.linspace(-5, 5, 100)
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+    # 函数图像
+    axes[0, 0].plot(x, sigmoid(x), label='Sigmoid', linewidth=2)
+    axes[0, 0].plot(x, np.tanh(x), label='Tanh', linewidth=2)
+    axes[0, 0].plot(x, relu(x), label='ReLU', linewidth=2)
+    axes[0, 0].plot(x, leaky_relu(x), label='Leaky ReLU', linewidth=2)
+    axes[0, 0].legend()
+    axes[0, 0].set_title('激活函数对比')
+    axes[0, 0].grid(True, alpha=0.3)
+
+    # 导数图像
+    axes[0, 1].plot(x, sigmoid_derivative(x), label='Sigmoid\'', linewidth=2)
+    axes[0, 1].plot(x, 1 - np.tanh(x)**2, label='Tanh\'', linewidth=2)
+    axes[0, 1].plot(x, relu_derivative(x), label='ReLU\'', linewidth=2)
+    axes[0, 1].plot(x, leaky_relu_derivative(x), label='Leaky ReLU\'', linewidth=2)
+    axes[0, 1].legend()
+    axes[0, 1].set_title('导数对比')
+    axes[0, 1].grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig('/tmp/exercise2_activations.png', dpi=100)
+```
+
+---
+
+## 练习3: 损失函数与梯度
+### 练习信息
+- **难度**: ⭐⭐⭐⭐☆
+- **预计时间**: 50分钟
+- **学习目标**:
+  - [ ] 理解不同损失函数的原理
+  - [ ] 实现损失函数及其梯度
+  - [ ] 理解梯度的计算过程
+
+### 任务描述
+实现并计算以下损失函数及其梯度：
+1. 均方误差（MSE）
+2. 交叉熵损失（Cross-Entropy）
+3. Hinge损失（SVM损失）
+
+### 提示
+**损失函数公式**:
+
+MSE:
+$$
+L = \frac{1}{n} \sum_{i=1}^{n}(y_i - \hat{y}_i)^2
+$$
+$$
+\frac{\partial L}{\partial \hat{y}} = -\frac{2}{n}(y - \hat{y})
+$$
+
+交叉熵:
+$$
+L = -\sum_{i} y_i \log(\hat{y}_i)
+$$
+$$
+\frac{\partial L}{\partial \hat{y}} = -\frac{y}{\hat{y}}
+$$
+
+### 评估标准
+- [ ] 实现3种损失函数（30分）
+- [ ] 正确计算梯度（40分）
+- [ ] 数值验证梯度（15分）
+- [ ] 可视化损失曲面（15分）
+
+### 参考实现
+```python
+def exercise3_loss_functions():
+    """练习3: 损失函数与梯度"""
+
+    # MSE损失
+    def mse_loss(y_true, y_pred):
+        return np.mean((y_true - y_pred) ** 2)
+
+    def mse_gradient(y_true, y_pred):
+        n = y_true.shape[0]
+        return -2 * (y_true - y_pred) / n
+
+    # 交叉熵损失
+    def cross_entropy_loss(y_true, y_pred, epsilon=1e-10):
+        y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
+        return -np.sum(y_true * np.log(y_pred)) / y_true.shape[0]
+
+    def cross_entropy_gradient(y_true, y_pred, epsilon=1e-10):
+        y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
+        return -(y_true / y_pred) / y_true.shape[0]
+
+    # 数值梯度检查
+    def numerical_gradient(f, x, h=1e-5):
+        grad = np.zeros_like(x)
+        it = np.nditer(x, flags=['multi_index'])
+        while not it.finished:
+            idx = it.multi_index
+            old_value = x[idx]
+            x[idx] = old_value + h
+            fxh = f(x)
+            x[idx] = old_value - h
+            fxl = f(x)
+            x[idx] = old_value
+            grad[idx] = (fxh - fxl) / (2 * h)
+            it.iternext()
+        return grad
+
+    # 测试
+    y_true = np.array([[1, 0], [0, 1]])
+    y_pred = np.array([[0.9, 0.1], [0.2, 0.8]])
+
+    print("MSE损失:", mse_loss(y_true, y_pred))
+    print("交叉熵损失:", cross_entropy_loss(y_true, y_pred))
+```
+
+---
+
+## 练习4: 反向传播实现
+### 练习信息
+- **难度**: ⭐⭐⭐⭐⭐
+- **预计时间**: 60分钟
+- **学习目标**:
+  - [ ] 深入理解反向传播算法
+  - [ ] 手动实现反向传播
+  - [ ] 验证梯度计算正确性
+
+### 任务描述
+实现一个完整的神经网络训练框架：
+1. 前向传播
+2. 反向传播
+3. 参数更新
+4. 数值梯度验证
+
+### 提示
+**反向传播核心公式**:
+$$
+\delta^{[l]} = \frac{\partial L}{\partial z^{[l]}}
+$$
+$$
+\frac{\partial L}{\partial W^{[l]}} = \delta^{[l]} \cdot (a^{[l-1]})^T
+$$
+$$
+\frac{\partial L}{\partial b^{[l]}} = \delta^{[l]}
+$$
+
+### 评估标准
+- [ ] 正确实现反向传播（40分）
+- [ ] 通过数值梯度验证（30分）
+- [ ] 训练损失下降（15分）
+- [ ] 代码结构清晰（15分）
+
+### 核心实现
+```python
+def exercise4_backpropagation():
+    """练习4: 反向传播实现"""
+
+    class SimpleNN:
+        def __init__(self):
+            # 初始化参数
+            self.W1 = np.random.randn(2, 3) * 0.1
+            self.b1 = np.zeros((1, 3))
+            self.W2 = np.random.randn(3, 2) * 0.1
+            self.b2 = np.zeros((1, 2))
+
+        def forward(self, X):
+            """前向传播"""
+            self.z1 = np.dot(X, self.W1) + self.b1
+            self.a1 = np.maximum(0, self.z1)  # ReLU
+            self.z2 = np.dot(self.a1, self.W2) + self.b2
+            exp_z2 = np.exp(self.z2 - np.max(self.z2, axis=1, keepdims=True))
+            self.a2 = exp_z2 / np.sum(exp_z2, axis=1, keepdims=True)
+            return self.a2
+
+        def backward(self, X, y):
+            """反向传播"""
+            m = X.shape[0]
+
+            # 输出层梯度
+            dz2 = self.a2 - y
+            dW2 = np.dot(self.a1.T, dz2) / m
+            db2 = np.sum(dz2, axis=0, keepdims=True) / m
+
+            # 隐藏层梯度
+            da1 = np.dot(dz2, self.W2.T)
+            dz1 = da1 * (self.z1 > 0)  # ReLU导数
+            dW1 = np.dot(X.T, dz1) / m
+            db1 = np.sum(dz1, axis=0, keepdims=True) / m
+
+            return dW1, db1, dW2, db2
+
+        def update(self, dW1, db1, dW2, db2, learning_rate=0.01):
+            """参数更新"""
+            self.W1 -= learning_rate * dW1
+            self.b1 -= learning_rate * db1
+            self.W2 -= learning_rate * dW2
+            self.b2 -= learning_rate * db2
+
+        def compute_loss(self, y_pred, y_true):
+            """计算交叉熵损失"""
+            epsilon = 1e-10
+            y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
+            return -np.sum(y_true * np.log(y_pred)) / y_true.shape[0]
+
+    # 训练
+    nn = SimpleNN()
+    X = np.array([[0.5, 0.8], [0.2, 0.1], [0.7, 0.6]])
+    y = np.array([[1, 0], [0, 1], [1, 0]])
+
+    losses = []
+    for epoch in range(1000):
+        # 前向传播
+        y_pred = nn.forward(X)
+
+        # 计算损失
+        loss = nn.compute_loss(y_pred, y)
+        losses.append(loss)
+
+        # 反向传播
+        dW1, db1, dW2, db2 = nn.backward(X, y)
+
+        # 更新参数
+        nn.update(dW1, db1, dW2, db2, learning_rate=0.1)
+
+        if epoch % 100 == 0:
+            print(f"Epoch {epoch}, Loss: {loss:.4f}")
+
+    return nn, losses
+```
+
+---
+
+## 练习5: 简单分类器训练
+### 练习信息
+- **难度**: ⭐⭐⭐⭐☆
+- **预计时间**: 60分钟
+- **学习目标**:
+  - [ ] 综合应用前向传播、反向传播
+  - [ ] 实现完整的训练流程
+  - [ ] 评估模型性能
+
+### 任务描述
+训练一个神经网络解决简单的二分类问题：
+1. 生成模拟数据集
+2. 实现训练循环
+3. 可视化决策边界
+4. 评估模型性能
+
+### 提示
+**数据集生成**:
+```python
+# 生成月亮形状数据集
+from sklearn.datasets import make_moons
+X, y = make_moons(n_samples=1000, noise=0.2, random_state=42)
+```
+
+### 评估标准
+- [ ] 生成数据集（10分）
+- [ ] 实现训练循环（40分）
+- [ ] 决策边界可视化（30分）
+- [ ] 性能评估（10分）
+- [ ] 代码质量（10分）
+
+### 完整实现
+```python
+def exercise5_train_classifier():
+    """练习5: 简单分类器训练"""
+
+    from sklearn.datasets import make_moons
+    from sklearn.model_selection import train_test_split
+
+    # 1. 生成数据
+    X, y = make_moons(n_samples=1000, noise=0.2, random_state=42)
+    y = y.reshape(-1, 1)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42)
+
+    # 2. 定义网络
+    nn = SimpleNN()  # 使用练习4的网络类
+
+    # 3. 训练
+    for epoch in range(1000):
+        # 前向传播
+        y_pred = nn.forward(X_train)
+
+        # 计算损失
+        loss = nn.compute_loss(y_pred, y_train)
+
+        # 反向传播
+        dW1, db1, dW2, db2 = nn.backward(X_train, y_train)
+
+        # 更新参数
+        nn.update(dW1, db1, dW2, db2, learning_rate=0.1)
+
+        if epoch % 100 == 0:
+            # 计算准确率
+            predictions = np.argmax(y_pred, axis=1)
+            accuracy = np.mean(predictions == y_train.flatten())
+            print(f"Epoch {epoch}, Loss: {loss:.4f}, Accuracy: {accuracy:.4f}")
+
+    # 4. 评估
+    test_pred = nn.forward(X_test)
+    test_predictions = np.argmax(test_pred, axis=1)
+    test_accuracy = np.mean(test_predictions == y_test.flatten())
+    print(f"\n测试准确率: {test_accuracy:.4f}")
+
+    return nn
+```
+
+---
+
+## 学习成果检验
+### 技能检查表
+完成所有练习后，检查你是否能够：
+
+- [ ] 理解神经网络的工作原理
+- [ ] 手动实现前向传播和反向传播
+- [ ] 理解并计算梯度
+- [ ] 选择合适的激活函数和损失函数
+- [ ] 训练简单的神经网络
+
+### 常见错误总结
+1. **梯度消失**: Sigmoid/Tanh在深层网络中容易梯度消失
+   - 解决: 使用ReLU或其变体
+
+2. **学习率过大**: 训练不稳定，损失震荡
+   - 解决: 降低学习率或使用学习率衰减
+
+3. **过拟合**: 训练集效果好，测试集效果差
+   - 解决: 使用正则化、Dropout、早停
+
+---
+
+## 进阶方向
+1. **优化器**: 实现SGD with Momentum, Adam, RMSprop
+2. **正则化**: L1/L2正则化, Dropout, Batch Normalization
+3. **CNN**: 卷积神经网络实现
+4. **实战项目**: 手写数字识别(MNIST)
+
+---
+
+**下一章**: [05-CNN架构](../M3/README.md)
+**返回**: [深度学习基础主页](README.md)
+
