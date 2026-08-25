@@ -303,7 +303,7 @@ Simon 原话："模型 harness 软件从响应中抽出函数调用请求——*
 
 模型看到结果，决定继续调用还是给出最终回答。**这个"请求 → tool_use → 执行 → tool_result → 再请求"的循环，就是 agent loop 的 API 层实现。**
 
-OpenAI 侧对照（三个关键差异）：Anthropic 用 `tool_use`/`tool_result` 内容块 + `stop_reason`；OpenAI 用 `message.tool_calls` + `role:"tool"` 消息；**OpenAI 的 `arguments` 是 JSON 字符串**需要再 `json.loads`，Anthropic 直接是 dict。OpenAI **每请求最多 128 个工具，官方建议每轮少于 20 个**——这个限制直接引出 6.4 节。
+OpenAI 侧对照（三个关键差异）：Anthropic 用 `tool_use`/`tool_result` 内容块 + `stop_reason`；OpenAI 用 `message.tool_calls` + `role:"tool"` 消息；**OpenAI 的 `arguments` 是 JSON 字符串**需要再 `json.loads`，Anthropic 直接是 dict。OpenAI **每请求最多 128 个工具，官方建议每轮少于 20 个**——这个限制直接引出 5.5 节。
 
 ### 5.3 "点菜"的直觉：模型怎么决定调用工具
 
